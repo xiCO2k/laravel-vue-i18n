@@ -13,7 +13,7 @@ const DEFAULT_LANG: string = document.documentElement.lang || 'en'
  */
 let options: OptionsInterface = {
   lang: DEFAULT_LANG,
-  resolve: (lang: string) => new Promise(resolve => resolve({ "default": {} }))
+  resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} }))
 }
 
 /**

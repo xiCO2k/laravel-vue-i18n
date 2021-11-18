@@ -89,6 +89,9 @@ export function trans(key: string, replacements?: ReplacementsInterface): string
   return message
 }
 
+/**
+ * The Vue Plugin. to be used on your Vue app like this: `app.use(i18nVue)`
+ */
 export const i18nVue: Plugin = {
   install: (app, currentOptions: OptionsInterface = {}) => {
     options = { ...options, ...currentOptions }

@@ -1,6 +1,6 @@
 # Laravel Vue i18n
 
-**laravel-vue-i18n** allows to connect your `Laravel` Framework localization files with `Vue`.
+**laravel-vue-i18n** allows to connect your `Laravel` Framework translation files with `Vue`.
 
 ## Usage
 
@@ -22,10 +22,10 @@ createApp()
 ### Plugin Options
 
 ```js
-    createApp().use(i18nVue, {
-        lang: 'pt',
-        resolve: lang => import(`../lang/${lang}.json`),
-    })
+createApp().use(i18nVue, {
+    lang: 'pt',
+    resolve: lang => import(`../lang/${lang}.json`),
+})
 ```
 
 ### trans()

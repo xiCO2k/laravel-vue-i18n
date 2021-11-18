@@ -43,5 +43,3 @@ trans('Welcome!'); // Bem-vindo!
 trans('Welcome, :name!', { name: 'Francisco' }) // Bem-vindo Francisco!
 trans('Welcome, :NAME!', { name: 'Francisco' }) // Bem-vindo FRANCISCO!
 ```
-
-

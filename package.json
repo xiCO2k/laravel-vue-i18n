@@ -1,6 +1,6 @@
 {
   "name": "laravel-vue-i18n",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Francisco Madeira",
     "email": "xico2k@gmail.com"
@@ -13,7 +13,9 @@
     "tsc": "tsc --watch",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "prettier -c \"src/**/*.(ts|js|vue)\" --write"
+    "lint": "prettier -c \"src/**/*.(ts|js|vue)\" --write",
+    "prepare": "tsc",
+    "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push --tags"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",

@@ -54,7 +54,7 @@ createApp().use(i18nVue, {
 })
 ```
 
-### trans()
+### `trans()`
 
 The `trans()` method can be used on
 
@@ -70,4 +70,17 @@ import { trans } from 'laravel-vue-i18n';
 trans('Welcome!'); // Bem-vindo!
 trans('Welcome, :name!', { name: 'Francisco' }) // Bem-vindo Francisco!
 trans('Welcome, :NAME!', { name: 'Francisco' }) // Bem-vindo FRANCISCO!
+```
+
+### `loadLanguageAsync()`
+
+The `loadLanguageAsync()` can be used to change the location during the runtime.
+
+```jsx
+import { loadLanguageAsync } from 'laravel-vue-i18n';
+
+<template>
+    <div>{{ $t('Welcome!') }}</div>
+    <button @click="() => loadLanguageAsync('pt')">Change to Portuguese Language</button>
+</template>
 ```

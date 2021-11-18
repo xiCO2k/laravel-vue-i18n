@@ -101,16 +101,3 @@ it('loads a lang', async () => {
   await loadLanguageAsync('pt');
   expect(wrapper.html()).toBe('<h1>Bem-vindo, Francisco!</h1>')
 })
-
-it('throws if the import fails', async () => {
-  expect(() => {
-    const wrapper = mount({ template: `<div />` }, {
-      global: {
-        plugins: [[i18nVue, {
-          lang: 'invalidlang',
-          resolve: lang => import(`./fixtures/lang/${lang}.json`),
-        }]]
-      }
-    });
-  }).toThrow();
-})

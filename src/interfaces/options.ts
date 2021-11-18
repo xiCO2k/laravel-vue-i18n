@@ -4,6 +4,6 @@ import { LanguageJsonFileInterface } from './language-json-file'
  * The Interface that is responsible for the Options provided.
  */
 export interface OptionsInterface {
-  lang: string
-  resolve(lang: string): Promise<LanguageJsonFileInterface>
+  lang?: string
+  resolve?(lang: string): Promise<LanguageJsonFileInterface>
 }

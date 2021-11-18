@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, Plugin } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { LanguageInterface } from './interfaces/language'
 import { ReplacementsInterface } from './interfaces/replacements'
@@ -89,8 +89,8 @@ export function trans(key: string, replacements: ReplacementsInterface): string 
   return message
 }
 
-export const i18nVue: object = {
-  install: (app, currentOptions: OptionsInterface) => {
+export const i18nVue: Plugin = {
+  install: (app, currentOptions: OptionsInterface = {}) => {
     options = { ...options, ...currentOptions }
     app.config.globalProperties.$t = (key: string, replacements: ReplacementsInterface) => trans(key, replacements)
     loadLanguageAsync(options.lang)

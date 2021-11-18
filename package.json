@@ -1,0 +1,42 @@
+{
+  "name": "laravel-vue-i18n",
+  "version": "0.0.1",
+  "author": {
+    "name": "Francisco Madeira",
+    "email": "xico2k@gmail.com"
+  },
+  "repository": "https://github.com/xico2k/laravel-vue-i18n",
+  "license": "MIT",
+  "description": "allows to connect your `Laravel` Framework localization files with `Vue`.",
+  "main": "dist/index.js",
+  "scripts": {
+    "tsc": "tsc --watch",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "lint": "prettier -c \"src/**/*.(ts|js|vue)\" --write"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.16.4",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "@vue/babel-plugin-jsx": "^1.1.1",
+    "@vue/test-utils": "^2.0.0-rc.16",
+    "babel-jest": "^27.3.1",
+    "jest": "^27.3.1",
+    "prettier": "^2.4.1",
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.5.2",
+    "vue-tsc": "0.29.5"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.1"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --parser=typescript --write"
+    ],
+    "*.js": [
+      "prettier --parser=javascript --write"
+    ]
+  }
+}

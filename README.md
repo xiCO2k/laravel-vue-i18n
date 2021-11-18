@@ -81,6 +81,6 @@ import { loadLanguageAsync } from 'laravel-vue-i18n';
 
 <template>
     <div>{{ $t('Welcome!') }}</div>
-    <button @click="() => loadLanguageAsync('pt')">Change to Portuguese Language</button>
+    <button @click="loadLanguageAsync('pt')">Change to Portuguese Language</button>
 </template>
 ```

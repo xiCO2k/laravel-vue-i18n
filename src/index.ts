@@ -70,7 +70,7 @@ export function loadLanguageAsync(lang: string): Promise<string | void> {
 /**
  * Get the translation for the given key.
  */
-export function trans(key: string, replacements: ReplacementsInterface): string {
+export function trans(key: string, replacements?: ReplacementsInterface): string {
   if (!activeMessages[key]) {
     activeMessages[key] = key
   }

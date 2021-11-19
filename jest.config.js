@@ -11,5 +11,6 @@ module.exports = {
   transform: {
     '^.+\\js$': 'babel-jest'
   },
-  moduleFileExtensions: ['vue', 'js', 'json', 'jsx', 'ts', 'tsx', 'node']
+  moduleFileExtensions: ['vue', 'js', 'json', 'jsx', 'ts', 'tsx', 'node'],
+  setupFiles: [path.resolve(__dirname, './test/setup.ts')]
 }

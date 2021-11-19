@@ -1,10 +1,11 @@
 {
   "name": "laravel-vue-i18n",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Francisco Madeira",
     "email": "xico2k@gmail.com"
   },
+  "keywords": "laravel, vue, vue3, inertiajs",
   "repository": "https://github.com/xico2k/laravel-vue-i18n",
   "license": "MIT",
   "description": "allows to connect your `Laravel` Framework localization files with `Vue`.",

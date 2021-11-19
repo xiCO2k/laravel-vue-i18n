@@ -28,25 +28,6 @@ const loaded: LanguageInterface[] = []
 const activeMessages: object = reactive({})
 
 /**
- * Sets the language messages to the activeMessages.
- */
-function setLanguage({ lang, messages }: LanguageInterface): string {
-  document.querySelector('html').setAttribute('lang', lang)
-
-  for (const [key, value] of Object.entries(messages)) {
-    activeMessages[key] = value
-  }
-
-  for (const [key] of Object.entries(activeMessages)) {
-    if (!messages[key]) {
-      activeMessages[key] = null
-    }
-  }
-
-  return lang
-}
-
-/**
  * Loads the language file.
  */
 export function loadLanguageAsync(lang: string): Promise<string | void> {
@@ -88,6 +69,25 @@ export function trans_choice(key: string, number: number, replacements: Replacem
   replacements.count = number.toString()
 
   return makeReplacements(choose(message, number, options.lang), replacements)
+}
+
+/**
+ * Sets the language messages to the activeMessages.
+ */
+function setLanguage({ lang, messages }: LanguageInterface): string {
+  document.querySelector('html').setAttribute('lang', lang)
+
+  for (const [key, value] of Object.entries(messages)) {
+    activeMessages[key] = value
+  }
+
+  for (const [key] of Object.entries(activeMessages)) {
+    if (!messages[key]) {
+      activeMessages[key] = null
+    }
+  }
+
+  return lang
 }
 
 /**

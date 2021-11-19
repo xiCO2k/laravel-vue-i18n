@@ -56,9 +56,9 @@ createApp().use(i18nVue, {
 })
 ```
 
-### `trans()`
+### `trans(message: string)`
 
-The `trans()` method can be used on
+The `trans()` method can translate a given message.
 
 ```js
 // lang/pt.json
@@ -74,7 +74,26 @@ trans('Welcome, :name!', { name: 'Francisco' }) // Bem-vindo Francisco!
 trans('Welcome, :NAME!', { name: 'Francisco' }) // Bem-vindo FRANCISCO!
 ```
 
-### `loadLanguageAsync()`
+### `trans_choice(message: string, count: number)`
+
+The `trans_choice()` method can translate a given message based on a count.
+
+```js
+// lang/pt.json
+{
+    "There is one apple|There are many apples": "Existe uma maça|Existe muitas maças",
+    "{0} There are none|[1,19] There are some|[20,*] There are many": "Não tem|Tem algumas|Tem muitas",
+    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos",
+}
+
+import { trans_choice } from 'laravel-vue-i18n';
+
+trans_choice('There is one apple|There are many apples', 1); // Existe uma maça
+trans_choice('{0} There are none|[1,19] There are some|[20,*] There are many', 19); // Tem algumas
+trans_choice('{1} :count minute ago|[2,*] :count minutes ago', 10); // Há 10 minutos.
+```
+
+### `loadLanguageAsync(lang: string)`
 
 The `loadLanguageAsync()` can be used to change the location during the runtime.
 

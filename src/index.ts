@@ -97,6 +97,8 @@ function makeReplacements(message: string, replacements?: ReplacementsInterface)
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1)
 
   Object.entries(replacements || []).forEach(([key, value]) => {
+    value = value.toString();
+
     message = message
       .replace(`:${key}`, value)
       .replace(`:${key.toUpperCase()}`, value.toUpperCase())

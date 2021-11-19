@@ -8,7 +8,7 @@ it('translates with $t mixin', async () => {
 })
 
 it('translates with "trans" helper', async () => {
-  const wrapper = await global.mountPlugin();
+  await global.mountPlugin();
 
   expect(trans('Welcome!')).toBe('Bem-vindo!');
 })
@@ -20,8 +20,7 @@ it('returns the same string given if it is not found on the lang file', async ()
 })
 
 it('returns the given key if the key is not available on the lang', async () => {
-  const wrapper = await global.mountPlugin(`<div />`, 'en');
-
+  await global.mountPlugin(`<div />`, 'en');
   expect(trans('Only Available on EN')).toBe('Only Available on EN');
 
   await loadLanguageAsync('pt');
@@ -35,7 +34,7 @@ it('translates key with values with $t mixin', async () => {
 })
 
 it('translates key with values with "trans" helper', async () => {
-  const wrapper = await global.mountPlugin();
+  await global.mountPlugin();
 
   expect(trans('Welcome, :name!', { name: 'Francisco' }))
     .toBe('Bem-vindo, Francisco!')

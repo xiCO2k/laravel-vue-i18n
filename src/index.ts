@@ -5,22 +5,22 @@ import { ReplacementsInterface } from './interfaces/replacements'
 import { choose } from './pluralization'
 
 /**
- * The Default language will be used if there is no lang provided.
+ * The default options, for the plugin.
  */
-const DEFAULT_LANG: string = document.documentElement.lang || 'en'
-
-/**
- * Stores the current options.
- */
-let options: OptionsInterface = {
-  lang: DEFAULT_LANG,
+const DEFAULT_OPTIONS: OptionsInterface = {
+  lang: document.documentElement.lang || 'en',
   resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} }))
 }
 
 /**
+ * Stores the current options.
+ */
+let options: OptionsInterface = DEFAULT_OPTIONS;
+
+/**
  * Stores the loaded languages.
  */
-const loaded: LanguageInterface[] = []
+let loaded: LanguageInterface[] = []
 
 /**
  * The active messages to use.
@@ -104,6 +104,18 @@ function makeReplacements(message: string, replacements?: ReplacementsInterface)
   })
 
   return message
+}
+
+/**
+ * Resets all the data stored in memory.
+ */
+export const reset = (): void => {
+  loaded = [];
+  options = DEFAULT_OPTIONS;
+
+  for (const [key] of Object.entries(activeMessages)) {
+    activeMessages[key] = null;
+  }
 }
 
 /**

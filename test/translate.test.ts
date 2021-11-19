@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, trans_choice, loadLanguageAsync } from '../src'
+import { i18nVue, trans, trans_choice, loadLanguageAsync, reset } from '../src'
+
+beforeEach(() => reset());
 
 it('translates with $t mixin', async () => {
   const wrapper = await global.mountPlugin(`<h1 v-text="$t('Welcome!')" />`);
@@ -11,6 +13,19 @@ it('translates with "trans" helper', async () => {
   await global.mountPlugin();
 
   expect(trans('Welcome!')).toBe('Bem-vindo!');
+})
+
+it('returns the same message if there is no resolve method provided', async () => {
+  const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
+    global: {
+      plugins: [i18nVue]
+    }
+  });
+
+  await new Promise(resolve => setTimeout(resolve));
+
+  expect(wrapper.html()).toBe('<h1>Welcome!</h1>');
+  expect(trans('Welcome!')).toBe('Welcome!');
 })
 
 it('returns the same string given if it is not found on the lang file', async () => {

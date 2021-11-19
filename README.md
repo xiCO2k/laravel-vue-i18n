@@ -40,7 +40,10 @@ createApp()
 
 ```html
 <template>
-    <div>{{ $t('Hi all') }}</div>
+    <div>
+        <h1>{{ $t('Welcome :name!', { name: 'Francisco' }) }}. </h1>
+        <div>Logged in {{ $tChoice('{1} :count minute ago|[2,*] :count minutes ago', 10) }}</div>
+    </div>
 </template>
 ```
 
@@ -74,9 +77,10 @@ trans('Welcome, :name!', { name: 'Francisco' }) // Bem-vindo Francisco!
 trans('Welcome, :NAME!', { name: 'Francisco' }) // Bem-vindo FRANCISCO!
 ```
 
-### `trans_choice(message: string, count: number)`
+### `transChoice(message: string, count: number)`
 
-The `trans_choice()` method can translate a given message based on a count.
+The `transChoice()` method can translate a given message based on a count,
+there is also available an `trans_choice` alias, and a mixin called `$tChoice()`.
 
 ```js
 // lang/pt.json
@@ -86,11 +90,11 @@ The `trans_choice()` method can translate a given message based on a count.
     "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos",
 }
 
-import { trans_choice } from 'laravel-vue-i18n';
+import { transChoice } from 'laravel-vue-i18n';
 
-trans_choice('There is one apple|There are many apples', 1); // Existe uma maça
-trans_choice('{0} There are none|[1,19] There are some|[20,*] There are many', 19); // Tem algumas
-trans_choice('{1} :count minute ago|[2,*] :count minutes ago', 10); // Há 10 minutos.
+transChoice('There is one apple|There are many apples', 1); // Existe uma maça
+transChoice('{0} There are none|[1,19] There are some|[20,*] There are many', 19); // Tem algumas
+transChoice('{1} :count minute ago|[2,*] :count minutes ago', 10); // Há 10 minutos.
 ```
 
 ### `loadLanguageAsync(lang: string)`

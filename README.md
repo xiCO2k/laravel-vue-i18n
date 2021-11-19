@@ -59,7 +59,7 @@ createApp().use(i18nVue, {
 })
 ```
 
-### `trans(message: string)`
+### `trans(message: string, replacements: {})`
 
 The `trans()` method can translate a given message.
 
@@ -77,7 +77,7 @@ trans('Welcome, :name!', { name: 'Francisco' }) // Bem-vindo Francisco!
 trans('Welcome, :NAME!', { name: 'Francisco' }) // Bem-vindo FRANCISCO!
 ```
 
-### `transChoice(message: string, count: number)`
+### `transChoice(message: string, count: number, replacements: {})`
 
 The `transChoice()` method can translate a given message based on a count,
 there is also available an `trans_choice` alias, and a mixin called `$tChoice()`.

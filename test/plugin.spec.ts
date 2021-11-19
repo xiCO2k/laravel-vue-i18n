@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, loadLanguageAsync } from '../src'
+import { i18nVue, trans, trans_choice, loadLanguageAsync } from '../src'
 
 it('translates with $t mixin', async () => {
   const wrapper = await global.mountPlugin(`<h1 v-text="$t('Welcome!')" />`);

@@ -2,6 +2,7 @@ import { reactive, Plugin } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { LanguageInterface } from './interfaces/language'
 import { ReplacementsInterface } from './interfaces/replacements'
+import { choose } from './pluralization'
 
 /**
  * The Default language will be used if there is no lang provided.
@@ -70,13 +71,29 @@ export function loadLanguageAsync(lang: string): Promise<string | void> {
 /**
  * Get the translation for the given key.
  */
-export function trans(key: string, replacements?: ReplacementsInterface): string {
+export function trans(key: string, replacements: ReplacementsInterface = {}): string {
   if (!activeMessages[key]) {
     activeMessages[key] = key
   }
 
-  let message = activeMessages[key]
+  return makeReplacements(activeMessages[key], replacements)
+}
 
+/**
+ * Translates the given message based on a count.
+ */
+export function trans_choice(key: string, number: number, replacements: ReplacementsInterface = {}): string {
+  const message = trans(key, replacements)
+
+  replacements.count = number.toString()
+
+  return makeReplacements(choose(message, number, options.lang), replacements)
+}
+
+/**
+ * Make the place-holder replacements on a line.
+ */
+function makeReplacements(message: string, replacements?: ReplacementsInterface): string {
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1)
 
   Object.entries(replacements || []).forEach(([key, value]) => {

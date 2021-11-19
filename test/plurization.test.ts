@@ -1,4 +1,4 @@
-import { trans_choice } from '../src';
+import { trans_choice, transChoice } from '../src';
 
 it.each([
   ['first', 'first', 1],
@@ -41,10 +41,10 @@ it.each([
 
   ['first', '{0}  first | { 1 } second', 0],
   ['first', '[4,*]first | [1,3]second', 100],
-])('translates plurization with "trans_choice" helper', async (expected, message, number) => {
+])('translates plurization with "transChoice" helper', async (expected, message, number) => {
   const wrapper = await global.mountPlugin()
 
-  expect(trans_choice(message, number)).toBe(expected)
+  expect(transChoice(message, number)).toBe(expected)
 })
 
 it.each([
@@ -55,4 +55,19 @@ it.each([
   const wrapper = await global.mountPlugin()
 
   expect(trans_choice(message, number, replacements)).toBe(expected)
+})
+
+it('translates even using the mixin "$tChoice()', async () => {
+  const wrapper = await global.mountPlugin(
+    `<h1>{{ $tChoice('{1} :count minute ago|[2,*] :count minutes ago', 3)}}</h1>`
+  )
+
+  expect(wrapper.html()).toBe('<h1>há 3 minutos</h1>');
+})
+
+it('translates even using an alias "trans_choice"', async () => {
+  await global.mountPlugin()
+
+  expect(trans_choice('{1} :count minute ago|[2,*] :count minutes ago', 3))
+    .toBe('há 3 minutos');
 })

@@ -63,7 +63,7 @@ export function trans(key: string, replacements: ReplacementsInterface = {}): st
 /**
  * Translates the given message based on a count.
  */
-export function trans_choice(key: string, number: number, replacements: ReplacementsInterface = {}): string {
+export function transChoice(key: string, number: number, replacements: ReplacementsInterface = {}): string {
   const message = trans(key, replacements)
 
   replacements.count = number.toString()
@@ -118,6 +118,12 @@ export const reset = (): void => {
   }
 }
 
+
+/**
+ * Alias to `transChoice` to mimic the same function name from Laravel Framework.
+ */
+export const trans_choice = transChoice;
+
 /**
  * The Vue Plugin. to be used on your Vue app like this: `app.use(i18nVue)`
  */
@@ -125,6 +131,7 @@ export const i18nVue: Plugin = {
   install: (app, currentOptions: OptionsInterface = {}) => {
     options = { ...options, ...currentOptions }
     app.config.globalProperties.$t = (key: string, replacements: ReplacementsInterface) => trans(key, replacements)
+    app.config.globalProperties.$tChoice = (key: string, number: number, replacements: ReplacementsInterface) => transChoice(key, number, replacements)
     loadLanguageAsync(options.lang)
   }
 }

@@ -48,7 +48,7 @@ createApp()
 ### Plugin Options
 
 - `lang` *(optional)*: if not provided it will try to find from the `<html lang="pt">` tag, if is not available it will default to `en`.
-- `resolve`: The way to reach your language files.
+- `resolve` *(optional)*: The way to reach your language files.
 
 ```js
 createApp().use(i18nVue, {

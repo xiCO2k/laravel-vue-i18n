@@ -32,9 +32,7 @@ import { createApp } from 'vue'
 import { i18nVue } from 'laravel-vue-i18n'
 
 createApp()
-    .use(i18nVue, {
-        resolve: lang => import(`../lang/${lang}.json`)
-    })
+    .use(i18nVue)
     .mount('#app');
 ```
 

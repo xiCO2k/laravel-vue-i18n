@@ -1,21 +1,30 @@
+import path from 'path'
 import { reactive, Plugin } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { LanguageInterface } from './interfaces/language'
+import { LanguageJsonFileInterface } from './interfaces/language-json-file'
 import { ReplacementsInterface } from './interfaces/replacements'
 import { choose } from './pluralization'
+
+/**
+ * Resolves the lang location, on a Laravel App.
+ */
+const defaultResolve = (lang: string): Promise<LanguageJsonFileInterface> => {
+  return import(`..${path.sep}..${path.sep}..${path.sep}..${path.sep}resources${path.sep}lang/${lang}.json`)
+}
 
 /**
  * The default options, for the plugin.
  */
 const DEFAULT_OPTIONS: OptionsInterface = {
   lang: document.documentElement.lang || 'en',
-  resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} }))
+  resolve: defaultResolve
 }
 
 /**
  * Stores the current options.
  */
-let options: OptionsInterface = DEFAULT_OPTIONS;
+let options: OptionsInterface = DEFAULT_OPTIONS
 
 /**
  * Stores the loaded languages.
@@ -97,7 +106,7 @@ function makeReplacements(message: string, replacements?: ReplacementsInterface)
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1)
 
   Object.entries(replacements || []).forEach(([key, value]) => {
-    value = value.toString();
+    value = value.toString()
 
     message = message
       .replace(`:${key}`, value)
@@ -112,19 +121,18 @@ function makeReplacements(message: string, replacements?: ReplacementsInterface)
  * Resets all the data stored in memory.
  */
 export const reset = (): void => {
-  loaded = [];
-  options = DEFAULT_OPTIONS;
+  loaded = []
+  options = DEFAULT_OPTIONS
 
   for (const [key] of Object.entries(activeMessages)) {
-    activeMessages[key] = null;
+    activeMessages[key] = null
   }
 }
-
 
 /**
  * Alias to `transChoice` to mimic the same function name from Laravel Framework.
  */
-export const trans_choice = transChoice;
+export const trans_choice = transChoice
 
 /**
  * The Vue Plugin. to be used on your Vue app like this: `app.use(i18nVue)`
@@ -133,7 +141,8 @@ export const i18nVue: Plugin = {
   install: (app, currentOptions: OptionsInterface = {}) => {
     options = { ...options, ...currentOptions }
     app.config.globalProperties.$t = (key: string, replacements: ReplacementsInterface) => trans(key, replacements)
-    app.config.globalProperties.$tChoice = (key: string, number: number, replacements: ReplacementsInterface) => transChoice(key, number, replacements)
+    app.config.globalProperties.$tChoice = (key: string, number: number, replacements: ReplacementsInterface) =>
+      transChoice(key, number, replacements)
     loadLanguageAsync(options.lang)
   }
 }

@@ -5,7 +5,7 @@
     "name": "Francisco Madeira",
     "email": "xico2k@gmail.com"
   },
-  "keywords": "laravel, vue, vue3, inertiajs",
+  "keywords": ["laravel", "vue", "vue3", "inertiajs"],
   "repository": "https://github.com/xico2k/laravel-vue-i18n",
   "license": "MIT",
   "description": "allows to connect your `Laravel` Framework localization files with `Vue`.",

@@ -18,7 +18,9 @@ it('translates with "trans" helper', async () => {
 it('returns the same message if there is no resolve method provided', async () => {
   const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
     global: {
-      plugins: [i18nVue]
+      plugins: [[i18nVue, {
+        resolve: () => new Promise((resolve) => resolve({ default: {} }))
+      }]]
     }
   });
 

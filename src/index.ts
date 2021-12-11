@@ -80,10 +80,18 @@ export function transChoice(key: string, number: number, replacements: Replaceme
 }
 
 /**
+ * Returns the current active language.
+ */
+export function getActiveLanguage(): string {
+  return options.lang;
+}
+
+/**
  * Sets the language messages to the activeMessages.
  */
 function setLanguage({ lang, messages }: LanguageInterface): string {
   document.querySelector('html').setAttribute('lang', lang)
+  options.lang = lang;
 
   for (const [key, value] of Object.entries(messages)) {
     activeMessages[key] = value

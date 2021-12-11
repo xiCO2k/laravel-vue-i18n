@@ -107,3 +107,14 @@ import { loadLanguageAsync } from 'laravel-vue-i18n';
     <button @click="loadLanguageAsync('pt')">Change to Portuguese Language</button>
 </template>
 ```
+
+### `getActiveLanguage()`
+
+The `getActiveLanguage()` returns the language that is current beign used.
+
+
+```jsx
+import { getActiveLanguage } from 'laravel-vue-i18n';
+
+const lang = getActiveLanguage(); // en
+```

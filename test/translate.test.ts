@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, trans_choice, loadLanguageAsync, reset } from '../src'
+import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage } from '../src'
 
 beforeEach(() => reset());
 
@@ -62,4 +62,13 @@ it('loads a lang', async () => {
 
   await loadLanguageAsync('pt');
   expect(wrapper.html()).toBe('<h1>Bem-vindo, Francisco!</h1>')
+})
+
+it('returns the active lang', async () => {
+  await global.mountPlugin();
+
+  expect(getActiveLanguage()).toBe('pt');
+
+  await loadLanguageAsync('en');
+  expect(getActiveLanguage()).toBe('en');
 })

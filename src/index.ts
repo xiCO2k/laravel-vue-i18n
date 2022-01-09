@@ -16,7 +16,7 @@ const defaultResolve = (lang: string): Promise<LanguageJsonFileInterface> => {
  * The default options, for the plugin.
  */
 const DEFAULT_OPTIONS: OptionsInterface = {
-  lang: document.documentElement.lang || 'en',
+  lang: document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : 'en',
   resolve: defaultResolve
 }
 

@@ -39,6 +39,8 @@ const activeMessages: object = reactive({})
  * Loads the language file.
  */
 export function loadLanguageAsync(lang: string): Promise<string | void> {
+  lang = lang.replace('-', '_');
+
   const loadedLang: LanguageInterface = loaded.find((row) => row.lang === lang)
 
   if (loadedLang) {

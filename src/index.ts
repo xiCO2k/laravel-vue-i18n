@@ -5,6 +5,8 @@ import { LanguageJsonFileInterface } from './interfaces/language-json-file'
 import { ReplacementsInterface } from './interfaces/replacements'
 import { choose } from './pluralization'
 
+const isServer = typeof window === 'undefined'
+
 /**
  * Resolves the lang location, on a Laravel App.
  */
@@ -16,7 +18,7 @@ const defaultResolve = (lang: string): Promise<LanguageJsonFileInterface> => {
  * The default options, for the plugin.
  */
 const DEFAULT_OPTIONS: OptionsInterface = {
-  lang: document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : 'en',
+  lang: ! isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : 'en',
   resolve: defaultResolve
 }
 
@@ -92,7 +94,10 @@ export function getActiveLanguage(): string {
  * Sets the language messages to the activeMessages.
  */
 function setLanguage({ lang, messages }: LanguageInterface): string {
-  document.querySelector('html').setAttribute('lang', lang)
+  if (! isServer) {
+    document.querySelector('html').setAttribute('lang', lang)
+  }
+
   options.lang = lang;
 
   for (const [key, value] of Object.entries(messages)) {

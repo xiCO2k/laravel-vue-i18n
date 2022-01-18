@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "module": "node12",
+    "target": "es5",
+    "lib": [
+      "es2015",
+      "es2017",
+      "dom"
+    ],
+    "module": "commonjs",
     "outDir": "dist",
     "sourceMap": true,
     "declaration": true,

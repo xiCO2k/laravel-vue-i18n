@@ -8,18 +8,11 @@ import { choose } from './pluralization'
 const isServer = typeof window === 'undefined'
 
 /**
- * Resolves the lang location, on a Laravel App.
- */
-const defaultResolve = (lang: string): Promise<LanguageJsonFileInterface> => {
-  return import(`../../../resources/lang/${lang}.json`)
-}
-
-/**
  * The default options, for the plugin.
  */
 const DEFAULT_OPTIONS: OptionsInterface = {
   lang: ! isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : 'en',
-  resolve: defaultResolve
+  resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} })),
 }
 
 /**

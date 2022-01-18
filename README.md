@@ -32,7 +32,9 @@ import { createApp } from 'vue'
 import { i18nVue } from 'laravel-vue-i18n'
 
 createApp()
-    .use(i18nVue)
+    .use(i18nVue, {
+        resolve: lang => import(`../../lang/${lang}.json`),
+    })
     .mount('#app');
 ```
 
@@ -48,12 +50,12 @@ createApp()
 ### Plugin Options
 
 - `lang` *(optional)*: if not provided it will try to find from the `<html lang="pt">` tag, if is not available it will default to `en`.
-- `resolve` *(optional)*: The way to reach your language files.
+- `resolve` *(required)*: The way to reach your language files.
 
 ```js
 createApp().use(i18nVue, {
     lang: 'pt',
-    resolve: lang => import(`../lang/${lang}.json`),
+    resolve: lang => import(`../../lang/${lang}.json`),
 })
 ```
 

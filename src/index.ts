@@ -88,7 +88,8 @@ export function getActiveLanguage(): string {
  */
 function setLanguage({ lang, messages }: LanguageInterface): string {
   if (! isServer) {
-    document.querySelector('html').setAttribute('lang', lang)
+    // When setting the HTML lang attribute, hyphen must be use instead of underscore.
+    document.documentElement.setAttribute("lang", lang.replace('_', '-'));
   }
 
   options.lang = lang;

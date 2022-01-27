@@ -78,4 +78,10 @@ it('translates to a underscore/dash language', async () => {
 
   await loadLanguageAsync('zh_TW');
   expect(getActiveLanguage()).toBe('zh_TW');
+
+  await loadLanguageAsync('en');
+
+  await loadLanguageAsync('zh-TW');
+
+  expect(getActiveLanguage()).toBe('zh_TW');
 })

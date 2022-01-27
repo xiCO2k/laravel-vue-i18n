@@ -72,3 +72,10 @@ it('returns the active lang', async () => {
   await loadLanguageAsync('en');
   expect(getActiveLanguage()).toBe('en');
 })
+
+it('translates to a underscore/dash language', async () => {
+  await global.mountPlugin();
+
+  await loadLanguageAsync('zh_TW');
+  expect(getActiveLanguage()).toBe('zh_TW');
+})

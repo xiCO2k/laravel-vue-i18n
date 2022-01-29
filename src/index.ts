@@ -31,6 +31,15 @@ let loaded: LanguageInterface[] = []
 const activeMessages: object = reactive({})
 
 /**
+ * Check if the language files are loaded
+ */
+export function isLoaded(lang?: string) {
+  lang ??= getActiveLanguage();
+
+  return loaded.some((row) => row.lang === lang);
+}
+
+/**
  * Loads the language file.
  */
 export function loadLanguageAsync(lang: string): Promise<string | void> {

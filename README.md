@@ -120,3 +120,16 @@ import { getActiveLanguage } from 'laravel-vue-i18n';
 
 const lang = getActiveLanguage(); // en
 ```
+
+### `isLoaded()`
+
+The `isLoaded()` check if the language files are loaded or not.
+
+```jsx
+import { isLoaded } from 'laravel-vue-i18n';
+
+const loaded = isLoaded(); // true
+
+const loaded = isLoaded('fr'); // false
+```
+

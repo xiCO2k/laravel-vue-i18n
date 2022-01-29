@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage } from '../src'
+import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded } from '../src'
 
 beforeEach(() => reset());
 
@@ -84,4 +84,13 @@ it('translates to a underscore/dash language', async () => {
   await loadLanguageAsync('zh-TW');
 
   expect(getActiveLanguage()).toBe('zh_TW');
+})
+
+it('checks if is a lang is loaded', async () => {
+  expect(isLoaded()).toBe(false);
+  await global.mountPlugin();
+
+  expect(isLoaded('zh_TW')).toBe(false);
+  await loadLanguageAsync('zh_TW');
+  expect(isLoaded('zh_TW')).toBe(true);
 })

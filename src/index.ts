@@ -11,8 +11,8 @@ const isServer = typeof window === 'undefined'
  * The default options, for the plugin.
  */
 const DEFAULT_OPTIONS: OptionsInterface = {
-  lang: ! isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : 'en',
-  resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} })),
+  lang: !isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : 'en',
+  resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} }))
 }
 
 /**
@@ -31,19 +31,19 @@ let loaded: LanguageInterface[] = []
 const activeMessages: object = reactive({})
 
 /**
- * Check if the language files are loaded
+ * Checks if the language is loaded.
  */
-export function isLoaded(lang?: string) {
-  lang ??= getActiveLanguage();
+export function isLoaded(lang?: string): boolean {
+  lang ??= getActiveLanguage()
 
-  return loaded.some((row) => row.lang === lang);
+  return loaded.some((row) => row.lang === lang)
 }
 
 /**
  * Loads the language file.
  */
 export function loadLanguageAsync(lang: string): Promise<string | void> {
-  lang = lang.replace('-', '_');
+  lang = lang.replace('-', '_')
 
   const loadedLang: LanguageInterface = loaded.find((row) => row.lang === lang)
 
@@ -89,19 +89,19 @@ export function transChoice(key: string, number: number, replacements: Replaceme
  * Returns the current active language.
  */
 export function getActiveLanguage(): string {
-  return options.lang;
+  return options.lang
 }
 
 /**
  * Sets the language messages to the activeMessages.
  */
 function setLanguage({ lang, messages }: LanguageInterface): string {
-  if (! isServer) {
+  if (!isServer) {
     // When setting the HTML lang attribute, hyphen must be use instead of underscore.
-    document.documentElement.setAttribute("lang", lang.replace('_', '-'));
+    document.documentElement.setAttribute('lang', lang.replace('_', '-'))
   }
 
-  options.lang = lang;
+  options.lang = lang
 
   for (const [key, value] of Object.entries(messages)) {
     activeMessages[key] = value

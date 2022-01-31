@@ -1,4 +1,4 @@
-import { trans_choice, transChoice } from '../src';
+import { trans_choice, transChoice, wTransChoice, loadLanguageAsync } from '../src';
 
 it.each([
   ['first', 'first', 1],
@@ -70,4 +70,19 @@ it('translates even using an alias "trans_choice"', async () => {
 
   expect(trans_choice('{1} :count minute ago|[2,*] :count minutes ago', 3))
     .toBe('há 3 minutos');
+})
+
+
+it('translates "wTransChoice" and test language change values', async () => {
+  await global.mountPlugin()
+
+  const translation = wTransChoice('{1} :count minute ago|[2,*] :count minutes ago', 3)
+  expect(translation.value)
+    .toBe('há 3 minutos');
+
+  await loadLanguageAsync('en');
+  
+  expect(translation.value)
+    .toBe('3 minutes ago');
+
 })

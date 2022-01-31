@@ -1,4 +1,4 @@
-import { reactive, Plugin } from 'vue'
+import { reactive, Plugin, computed, ComputedRef } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { LanguageInterface } from './interfaces/language'
 import { LanguageJsonFileInterface } from './interfaces/language-json-file'
@@ -67,22 +67,36 @@ export function loadLanguageAsync(lang: string): Promise<string | void> {
  * Get the translation for the given key.
  */
 export function trans(key: string, replacements: ReplacementsInterface = {}): string {
+  return wTrans(key, replacements).value
+}
+
+/**
+ * Get the translation for the given key and watch for any changes.
+ */
+export function wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
   if (!activeMessages[key]) {
     activeMessages[key] = key
   }
 
-  return makeReplacements(activeMessages[key], replacements)
+  return computed(() => makeReplacements(activeMessages[key], replacements))
 }
 
 /**
  * Translates the given message based on a count.
  */
 export function transChoice(key: string, number: number, replacements: ReplacementsInterface = {}): string {
-  const message = trans(key, replacements)
+  return wTransChoice(key, number, replacements).value
+}
+
+/**
+ * Translates the given message based on a count and watch for changes.
+ */
+export function wTransChoice(key: string, number: number, replacements: ReplacementsInterface = {}): ComputedRef<string> {
+  const message = wTrans(key, replacements)
 
   replacements.count = number.toString()
 
-  return makeReplacements(choose(message, number, options.lang), replacements)
+  return computed(() => makeReplacements(choose(message.value, number, options.lang), replacements))
 }
 
 /**

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded } from '../src'
+import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans } from '../src'
 
 beforeEach(() => reset());
 
@@ -93,4 +93,17 @@ it('checks if is a lang is loaded', async () => {
   expect(isLoaded('zh_TW')).toBe(false);
   await loadLanguageAsync('zh_TW');
   expect(isLoaded('zh_TW')).toBe(true);
+})
+
+it('checks if watching translation works', async () => {
+  await global.mountPlugin();
+
+  const translated = wTrans("Welcome!");
+  expect(translated.value)
+    .toBe('Bem-vindo!')
+
+  await loadLanguageAsync('en')
+
+  expect(translated.value)
+    .toBe('Wecome!')
 })

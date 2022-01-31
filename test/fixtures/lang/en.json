@@ -1,5 +1,6 @@
 {
     "Welcome!": "Wecome!",
     "Welcome, :name!": "Bem-vindo, :name!",
-    "Only Available on EN": "Only Available on EN"
+    "Only Available on EN": "Only Available on EN",
+    "{1} :count minute ago|[2,*] :count minutes ago": "{1} :count minute ago|[2,*] :count minutes ago"
 }

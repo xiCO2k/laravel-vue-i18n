@@ -79,8 +79,8 @@ trans('Welcome, :NAME!', { name: 'Francisco' }) // Bem-vindo FRANCISCO!
 
 ### `wTrans(message: string, replacements: {})`
 
-The `wTrans()` same as `trans()` but returns a reactive obj with translated value. 
-
+The `wTrans()` same as `trans()` but returns a reactive obj with translated value,
+use it instead of `trans()` to watch any changes (language changes or lang files loaded) and set the new value.
 ```jsx
 // lang/pt.json
 {
@@ -126,7 +126,8 @@ transChoice('{1} :count minute ago|[2,*] :count minutes ago', 10); // Há 10 min
 
 ### `wTransChoice(message: string, count: number, replacements: {})`
 
-The `wTransChoice()` same as `transChoice()` but returns a reactive obj with translated value. 
+The `wTransChoice()` same as `transChoice()` but returns a reactive obj with translated value,
+use it instead of `transChoice()` to watch any changes (language changes or lang files loaded) and set the new value.
 
 
 ```jsx

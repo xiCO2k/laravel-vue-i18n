@@ -77,6 +77,32 @@ trans('Welcome, :name!', { name: 'Francisco' }) // Bem-vindo Francisco!
 trans('Welcome, :NAME!', { name: 'Francisco' }) // Bem-vindo FRANCISCO!
 ```
 
+### `wTrans(message: string, replacements: {})`
+
+The `wTrans()` same as `trans()` but returns a reactive obj with translated value. 
+
+```jsx
+// lang/pt.json
+{
+    "Welcome!": "Bem-vindo!",
+    "Welcome, :name!": "Bem-vindo, :name!",
+}
+
+import { wTrans } from 'laravel-vue-i18n';
+
+setup() {
+    return {
+        welcomeLabel: wTrans('Welcome!'),
+        welcomeFrancisco: wTrans('Welcome, :name!', { name: 'Francisco' })
+    } 
+}
+
+<template>
+    <div>{{ welcomeLabel }}</div> // <div>Bem-vindo!</div>
+    <div>{{ welcomeFrancisco }}</div> // <div>Bem-vindo, Francisco!</div>
+</template>
+```
+
 ### `transChoice(message: string, count: number, replacements: {})`
 
 The `transChoice()` method can translate a given message based on a count,
@@ -95,6 +121,35 @@ import { transChoice } from 'laravel-vue-i18n';
 transChoice('There is one apple|There are many apples', 1); // Existe uma maça
 transChoice('{0} There are none|[1,19] There are some|[20,*] There are many', 19); // Tem algumas
 transChoice('{1} :count minute ago|[2,*] :count minutes ago', 10); // Há 10 minutos.
+```
+
+
+### `wTransChoice(message: string, count: number, replacements: {})`
+
+The `wTransChoice()` same as `transChoice()` but returns a reactive obj with translated value. 
+
+
+```jsx
+// lang/pt.json
+{
+    "There is one apple|There are many apples": "Existe uma maça|Existe muitas maças",
+    "{0} There are none|[1,19] There are some|[20,*] There are many": "Não tem|Tem algumas|Tem muitas",
+    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos",
+}
+
+import { wTransChoice } from 'laravel-vue-i18n';
+
+setup() {
+    return {
+        oneAppleLabel: wTransChoice('There is one apple|There are many apples', 1),
+        multipleApplesLabel: wTransChoice('{0} There are none|[1,19] There are some|[20,*] There are many', 19)
+    } 
+}
+
+<template>
+    <div>{{ oneAppleLabel }}</div> // <div>Existe uma maça</div>
+    <div>{{ multipleApplesLabel }}</div> // <div>Tem algumas</div>
+</template>
 ```
 
 ### `loadLanguageAsync(lang: string)`

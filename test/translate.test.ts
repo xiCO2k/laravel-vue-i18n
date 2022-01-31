@@ -90,9 +90,9 @@ it('checks if is a lang is loaded', async () => {
   expect(isLoaded()).toBe(false);
   await global.mountPlugin();
 
-  expect(isLoaded('zh_TW')).toBe(false);
-  await loadLanguageAsync('zh_TW');
-  expect(isLoaded('zh_TW')).toBe(true);
+  expect(isLoaded('zh-TW')).toBe(false);
+  await loadLanguageAsync('zh-TW');
+  expect(isLoaded('zh-TW')).toBe(true);
 })
 
 it('checks if watching translation works', async () => {

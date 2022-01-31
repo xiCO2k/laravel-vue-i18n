@@ -35,6 +35,7 @@ const activeMessages: object = reactive({})
  */
 export function isLoaded(lang?: string): boolean {
   lang ??= getActiveLanguage()
+  lang = lang.replace('-', '_')
 
   return loaded.some((row) => row.lang === lang)
 }
@@ -91,7 +92,11 @@ export function transChoice(key: string, number: number, replacements: Replaceme
 /**
  * Translates the given message based on a count and watch for changes.
  */
-export function wTransChoice(key: string, number: number, replacements: ReplacementsInterface = {}): ComputedRef<string> {
+export function wTransChoice(
+  key: string,
+  number: number,
+  replacements: ReplacementsInterface = {}
+): ComputedRef<string> {
   const message = wTrans(key, replacements)
 
   replacements.count = number.toString()

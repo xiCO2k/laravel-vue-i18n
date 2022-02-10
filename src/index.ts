@@ -1,7 +1,6 @@
 import { reactive, Plugin, computed, ComputedRef } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { LanguageInterface } from './interfaces/language'
-import { LanguageJsonFileInterface } from './interfaces/language-json-file'
 import { ReplacementsInterface } from './interfaces/replacements'
 import { choose } from './pluralization'
 

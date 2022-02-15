@@ -25,7 +25,7 @@ or with [yarn](https://yarnpkg.com):
 $ yarn add laravel-vue-i18n
 ```
 
-## Installation
+## Setup
 
 ```js
 import { createApp } from 'vue'

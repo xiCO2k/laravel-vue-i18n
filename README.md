@@ -25,7 +25,7 @@ or with [yarn](https://yarnpkg.com):
 $ yarn add laravel-vue-i18n
 ```
 
-## Usage
+## Installation
 
 ```js
 import { createApp } from 'vue'
@@ -37,6 +37,19 @@ createApp()
     })
     .mount('#app');
 ```
+
+### With `vite`
+
+The `resolve` method will need to be:
+
+```js
+resolve: async lang => {
+    const langs = import.meta.glob('../../lang/*.json');
+    return await langs[`../../lang/${lang}.json`]();
+}
+````
+
+### Usage
 
 ```html
 <template>

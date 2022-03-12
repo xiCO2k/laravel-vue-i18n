@@ -49,6 +49,17 @@ resolve: async lang => {
 }
 ````
 
+### With SSR
+
+The `resolve` method can receive a `require` instead of a `Promise`:
+
+```js
+.use(i18nVue, {
+    lang: 'pt',
+    resolve: lang => require(`../../lang/${lang}.json`),
+})
+````
+
 ### Usage
 
 ```html

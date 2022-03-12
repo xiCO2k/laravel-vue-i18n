@@ -107,3 +107,32 @@ it('checks if watching translation works', async () => {
   expect(translated.value)
     .toBe('Wecome!')
 })
+
+it('resolves translated data without Promise', async () => {
+  const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
+    global: {
+      plugins: [[i18nVue, {
+        resolve: () => ({ 'Foo': 'Bar' }),
+      }]]
+    }
+  });
+
+  await new Promise(resolve => setTimeout(resolve));
+
+  expect(trans('Foo')).toBe('Bar');
+});
+
+it('resolves translated data with require', async () => {
+  const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
+    global: {
+      plugins: [[i18nVue, {
+        lang: 'pt',
+        resolve: (lang) => require(`./fixtures/lang/${lang}.json`),
+      }]]
+    }
+  });
+
+  await new Promise(resolve => setTimeout(resolve));
+
+  expect(trans('Welcome!')).toBe('Bem-vindo!');
+});

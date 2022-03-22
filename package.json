@@ -30,11 +30,12 @@
     "@vue/test-utils": "^2.0.0-rc.17",
     "babel-jest": "^27.5.1",
     "jest": "^27.5.1",
+    "laravel-mix": "^6.0.43",
+    "php-parser": "^3.1.0-beta.4",
     "prettier": "^2.5.1",
     "ts-jest": "^27.1.3",
-    "typescript": "^4.6.2",
-    "laravel-mix": "^6.0.43",
-    "php-parser": "^3.1.0-beta.4"
+    "ts-loader": "^9.2.8",
+    "typescript": "^4.6.2"
   },
   "dependencies": {
     "vue": "^3.2.31"

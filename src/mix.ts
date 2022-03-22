@@ -1,7 +1,11 @@
-import mix from 'laravel-mix';
 import path from 'path';
 import fs from 'fs';
+
+// @ts-ignore
+import mix from 'laravel-mix';
+// @ts-ignore
 import { Component } from 'laravel-mix/src/components/Component';
+
 import { parseAll } from './loader';
 
 class BeforeBuildPlugin {

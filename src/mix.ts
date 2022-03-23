@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import mix from 'laravel-mix';
 import { Component } from 'laravel-mix/src/components/Component';
-import { EnvironmentPlugin } from 'webpack';
+import { EnvironmentPlugin, Configuration } from 'webpack';
 
 import { parseAll, hasPhpTranslations } from './loader';
 
@@ -23,11 +23,11 @@ mix.extend('i18n', class extends Component {
     langPath: string;
     context: any;
 
-    register(langPath = 'lang'): void {
+    register(langPath: string = 'lang'): void {
         this.langPath = this.context.paths.rootPath + path.sep + langPath;
     }
 
-    webpackConfig(config): void {
+    webpackConfig(config: Configuration): void {
         let files = [];
 
         config.watchOptions = {

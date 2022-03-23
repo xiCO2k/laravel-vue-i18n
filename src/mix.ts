@@ -1,12 +1,11 @@
 import path from 'path';
 import fs from 'fs';
 
-// @ts-ignore
 import mix from 'laravel-mix';
-// @ts-ignore
 import { Component } from 'laravel-mix/src/components/Component';
+import { EnvironmentPlugin } from 'webpack';
 
-import { parseAll } from './loader';
+import { parseAll, hasPhpTranslations } from './loader';
 
 class BeforeBuildPlugin {
     callback: Function;
@@ -34,6 +33,12 @@ mix.extend('i18n', class extends Component {
         config.watchOptions = {
             ignored: /php_\w+\.json/,
         };
+
+        if (hasPhpTranslations(this.langPath)) {
+            config.plugins.push(new EnvironmentPlugin({
+                'LARAVEL_VUE_I18N_HAS_PHP': true,
+            }));
+        }
 
         config.plugins.push(new BeforeBuildPlugin(() => {
             files = parseAll(this.langPath);

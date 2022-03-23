@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { parseAll, parse } from '../src/loader';
+import { parseAll, parse, hasPhpTranslations } from '../src/loader';
 
 beforeEach(() => {
     const folderPath = __dirname + '/fixtures/lang/';
@@ -29,4 +29,10 @@ it('transforms .php lang to .json', () => {
     const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());
 
     expect(lang['failed']).toBe('These credentials do not match our records.');
+});
+
+it('checks if there is .php translations', () => {
+    const hasTranslations = hasPhpTranslations(__dirname + '/fixtures/lang/');
+
+    expect(hasTranslations).toBe(true);
 });

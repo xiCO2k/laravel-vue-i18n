@@ -1,1 +1,1 @@
-import 'dist/mix';
+require('./dist/mix');

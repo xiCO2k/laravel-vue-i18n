@@ -60,6 +60,22 @@ The `resolve` method can receive a `require` instead of a `Promise`:
 })
 ````
 
+### Laravel Mix Plugin
+
+In order to load `php` translations, you can use this `Mix` plugin.
+
+```js
+const mix = require('laravel-mix');
+require('laravel-vue-i18n/mix');
+
+// Laravel >= 9
+mix.i18n();
+
+// Laravel < 9, since the lang folder is inside the resources folder
+// you will need to pass as parameter.
+mix.i18n('resouces/lang');
+```
+
 ### Usage
 
 ```html

@@ -137,7 +137,7 @@ function setLanguage({ lang, messages }: LanguageInterface): string {
 /**
  * It resolves the language file or data, from direct data, require or Promise.
  */
-async function resolveLang(callable: Function, lang: string) {
+async function resolveLang(callable: Function, lang: string): Promise<LanguageJsonFileInterface> {
   const hasPhpTranslations = process.env.LARAVEL_VUE_I18N_HAS_PHP;
   const data = callable(lang)
 
@@ -149,7 +149,7 @@ async function resolveLang(callable: Function, lang: string) {
       return new Promise((resolve) => resolve({
         default: {
           ...phpLang,
-          ...jsonLang
+          ...jsonLang,
         }
       }));
     }

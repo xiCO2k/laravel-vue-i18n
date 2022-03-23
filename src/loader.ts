@@ -61,7 +61,7 @@ export const parse = (content: string) => {
     const arr = (new Engine({})).parseCode(content, 'lang').children
         .filter(child => child.kind === 'return')[0] as any;
 
-    return parseItem(arr.expr);
+    return convertToDotsSyntax(parseItem(arr.expr));
 }
 
 const parseItem = (expr) => {

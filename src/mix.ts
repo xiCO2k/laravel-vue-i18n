@@ -35,8 +35,9 @@ mix.extend('i18n', class extends Component {
         };
 
         if (hasPhpTranslations(this.langPath)) {
+            console.log('has translations');
             config.plugins.push(new EnvironmentPlugin({
-                'LARAVEL_VUE_I18N_HAS_PHP': true,
+                'LARAVEL_VUE_I18N_HAS_PHP': 'true',
             }));
         }
 

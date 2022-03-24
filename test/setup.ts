@@ -17,6 +17,21 @@ global.mountPlugin = async (template = '<div />', lang = 'pt') => {
   return wrapper;
 }
 
+global.mountPluginWithRequire = async (template = '<div />', lang = 'pt') => {
+  const wrapper = mount({ template }, {
+    global: {
+      plugins: [[i18nVue, {
+        lang,
+        resolve: (lang) => require(`./fixtures/lang/${lang}.json`),
+      }]]
+    }
+  });
+
+  await new Promise(resolve => setTimeout(resolve))
+
+  return wrapper;
+}
+
 global.mixLoader = () => {
   parseAll(__dirname + '/fixtures/lang/');
 

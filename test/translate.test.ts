@@ -125,16 +125,7 @@ it('resolves translated data without Promise', async () => {
 });
 
 it('resolves translated data with require', async () => {
-  const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
-    global: {
-      plugins: [[i18nVue, {
-        lang: 'pt',
-        resolve: (lang) => require(`./fixtures/lang/${lang}.json`),
-      }]]
-    }
-  });
-
-  await new Promise(resolve => setTimeout(resolve));
+  const wrapper = await global.mountPluginWithRequire(`<h1>{{ $t('Welcome!') }}</h1>`);
 
   expect(trans('Welcome!')).toBe('Bem-vindo!');
 });
@@ -145,3 +136,31 @@ it('resolves translated data from .php files', async () => {
 
   expect(wrapper.html()).toBe('<h1>As credenciais indicadas não coincidem com as registadas no sistema.</h1>')
 });
+
+it('resolves translated data with loader if there is no .php files for that lang', async () => {
+  global.mixLoader();
+  const wrapper = await global.mountPlugin(`<h1 v-text="$t('Welcome!')" />`, 'es');
+
+  expect(wrapper.html()).toBe('<h1>Bienvenido!</h1>')
+})
+
+it('resolves translated data with loader if there is no .php files for that lang with require', async () => {
+  global.mixLoader();
+  const wrapper = await global.mountPluginWithRequire(`<h1 v-text="$t('Welcome!')" />`, 'es');
+
+  expect(wrapper.html()).toBe('<h1>Bienvenido!</h1>')
+});
+
+it('resolves translated data with loader if there is only .php files for that lang', async () => {
+  global.mixLoader();
+  const wrapper = await global.mountPlugin(`<h1 v-text="$t('auth.failed')" />`, 'fr');
+
+  expect(wrapper.html()).toBe('<h1>Ces identifiants ne correspondent pas à nos enregistrements.</h1>')
+})
+
+it('resolves translated data with loader if there is only .php files for that lang with require', async () => {
+  global.mixLoader();
+  const wrapper = await global.mountPluginWithRequire(`<h1 v-text="$t('auth.failed')" />`, 'fr');
+
+  expect(wrapper.html()).toBe('<h1>Ces identifiants ne correspondent pas à nos enregistrements.</h1>')
+})

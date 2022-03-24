@@ -6,7 +6,7 @@ beforeEach(() => reset(__dirname + '/fixtures/lang/'));
 it('creates a file for each lang', () => {
     const files = parseAll(__dirname + '/fixtures/lang/');
 
-    expect(files.length).toBe(2);
+    expect(files.length).toBe(3);
     expect(files[0].name).toBe('php_en.json');
     expect(files[1].name).toBe('php_pt.json');
 

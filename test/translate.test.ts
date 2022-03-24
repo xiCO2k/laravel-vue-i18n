@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans } from '../src'
+import { reset as resetLoader } from '../src/loader'
 
 beforeEach(() => reset());
+afterEach(() => resetLoader(__dirname + '/fixtures/lang/'));
 
 it('translates with $t mixin', async () => {
   const wrapper = await global.mountPlugin(`<h1 v-text="$t('Welcome!')" />`);
@@ -135,4 +137,11 @@ it('resolves translated data with require', async () => {
   await new Promise(resolve => setTimeout(resolve));
 
   expect(trans('Welcome!')).toBe('Bem-vindo!');
+});
+
+it('resolves translated data from .php files', async () => {
+  global.mixLoader();
+  const wrapper = await global.mountPlugin(`<h1 v-text="$t('auth.failed')" />`);
+
+  expect(wrapper.html()).toBe('<h1>As credenciais indicadas não coincidem com as registadas no sistema.</h1>')
 });

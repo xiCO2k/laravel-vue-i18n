@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { i18nVue } from '../src'
+import { parseAll } from '../src/loader'
 
 global.mountPlugin = async (template = '<div />', lang = 'pt') => {
   const wrapper = mount({ template }, {
@@ -14,4 +15,12 @@ global.mountPlugin = async (template = '<div />', lang = 'pt') => {
   await new Promise(resolve => setTimeout(resolve))
 
   return wrapper;
+}
+
+global.mixLoader = () => {
+  parseAll(__dirname + '/fixtures/lang/');
+
+  process.env = Object.assign(process.env, {
+    LARAVEL_VUE_I18N_HAS_PHP: 'true',
+  });
 }

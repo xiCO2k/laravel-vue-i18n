@@ -106,3 +106,11 @@ const convertToDotsSyntax = (list) => {
 
     return flatten(list);
 }
+
+export const reset = (folderPath) => {
+    const dir = fs.readdirSync(folderPath);
+
+    dir.filter(file => file.match(/^php_/)).forEach(file => {
+        fs.unlinkSync(folderPath + file);
+    });
+}

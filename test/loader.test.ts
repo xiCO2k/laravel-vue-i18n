@@ -1,14 +1,7 @@
 import fs from 'fs';
-import { parseAll, parse, hasPhpTranslations } from '../src/loader';
+import { parseAll, parse, hasPhpTranslations, reset } from '../src/loader';
 
-beforeEach(() => {
-    const folderPath = __dirname + '/fixtures/lang/';
-    const dir = fs.readdirSync(folderPath);
-
-    dir.filter(file => file.match(/^php_/)).forEach(file => {
-        fs.unlinkSync(folderPath + file);
-    });
-});
+beforeEach(() => reset(__dirname + '/fixtures/lang/'));
 
 it('creates a file for each lang', () => {
     const files = parseAll(__dirname + '/fixtures/lang/');

@@ -1,15 +1,15 @@
 export const avoidException = (callback: Function, param, defaults = {}) => {
   try {
-    return callback(param);
+    return callback(param)
   } catch {
-    return defaults;
+    return defaults
   }
 }
 
 export const avoidExceptionOnPromise = async (promise, defaults = {}) => {
   try {
-    return (await promise).default || defaults;
+    return (await promise).default || defaults
   } catch (e) {
-    return defaults;
+    return defaults
   }
 }

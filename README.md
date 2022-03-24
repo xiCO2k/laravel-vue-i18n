@@ -27,6 +27,8 @@ $ yarn add laravel-vue-i18n
 
 ## Setup
 
+> If you want to see a screencast on how to setup check out this video: [How to use Laravel Vue i18n plugin](https://www.youtube.com/watch?v=ONRo8-i5Qsk).
+
 ```js
 import { createApp } from 'vue'
 import { i18nVue } from 'laravel-vue-i18n'

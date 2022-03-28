@@ -17,12 +17,12 @@
 ## Installation
 With [npm](https://www.npmjs.com):
 ```sh
-$ npm i laravel-vue-i18n
+npm i laravel-vue-i18n
 ```
 
 or with [yarn](https://yarnpkg.com):
 ```sh
-$ yarn add laravel-vue-i18n
+yarn add laravel-vue-i18n
 ```
 
 ## Setup

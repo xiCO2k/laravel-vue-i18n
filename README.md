@@ -75,7 +75,7 @@ mix.i18n();
 
 // Laravel < 9, since the lang folder is inside the resources folder
 // you will need to pass as parameter.
-mix.i18n('resouces/lang');
+mix.i18n('resources/lang');
 ```
 
 ### Usage

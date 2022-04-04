@@ -7,41 +7,6 @@
  */
 export function getPluralIndex(lang: string, number: number): number {
   switch (lang.replace('_', '-')) {
-    case 'az':
-    case 'az-AZ':
-    case 'bo':
-    case 'bo-CN':
-    case 'bo-IN':
-    case 'dz':
-    case 'dz-BT':
-    case 'id':
-    case 'id-ID':
-    case 'ja':
-    case 'ja-JP':
-    case 'jv':
-    case 'ka':
-    case 'ka-GE':
-    case 'km':
-    case 'km-KH':
-    case 'kn':
-    case 'kn-IN':
-    case 'ko':
-    case 'ko-KR':
-    case 'ms':
-    case 'ms-MY':
-    case 'th':
-    case 'th-TH':
-    case 'tr':
-    case 'tr-CY':
-    case 'tr-TR':
-    case 'vi':
-    case 'vi-VN':
-    case 'zh':
-    case 'zh-CN':
-    case 'zh-HK':
-    case 'zh-SG':
-    case 'zh-TW':
-      return 0
     case 'af':
     case 'af-ZA':
     case 'bn':

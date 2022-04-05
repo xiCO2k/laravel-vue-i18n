@@ -34,8 +34,13 @@ it('transform nested .php lang files to .json', () => {
     expect(langEn['foo.level1.level2']).toBe('baren');
 });
 
-it('checks if there is .php translations', () => {
-    const hasTranslations = hasPhpTranslations(__dirname + '/fixtures/lang/');
+it('transforms simple index array to .json', () => {
+    const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());
+    expect(lang['arr.0']).toBe('foo');
+    expect(lang['arr.1']).toBe('bar');
+});
 
-    expect(hasTranslations).toBe(true);
+it('checks if there is .php translations', () => {
+    expect(hasPhpTranslations(__dirname + '/fixtures/lang/')).toBe(true);
+    expect(hasPhpTranslations(__dirname + '/fixtures/wronglangfolder/')).toBe(false);
 });

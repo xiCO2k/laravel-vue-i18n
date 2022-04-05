@@ -7,5 +7,6 @@ return [
         'level1' => [
             'level2' => 'baren'
         ]
-    ]
+    ],
+    'arr' => ['foo', 'bar'],
 ];

@@ -58,10 +58,7 @@ export function loadLanguageAsync(lang: string): Promise<string | void> {
       const data: LanguageInterface = { lang, messages }
       loaded.push(data)
       return setLanguage(data)
-    })
-    .catch((err) => {
-      throw new TypeError(`Cannot load lang: ${lang} file: ${err.message}`)
-    })
+    });
 }
 
 /**

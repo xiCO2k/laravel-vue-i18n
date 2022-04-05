@@ -53,12 +53,11 @@ export function loadLanguageAsync(lang: string): Promise<string | void> {
     return Promise.resolve(setLanguage(loadedLang))
   }
 
-  return resolveLang(options.resolve, lang)
-    .then(({ default: messages }) => {
-      const data: LanguageInterface = { lang, messages }
-      loaded.push(data)
-      return setLanguage(data)
-    });
+  return resolveLang(options.resolve, lang).then(({ default: messages }) => {
+    const data: LanguageInterface = { lang, messages }
+    loaded.push(data)
+    return setLanguage(data)
+  })
 }
 
 /**

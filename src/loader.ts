@@ -84,6 +84,10 @@ const parseItem = (expr) => {
     return items
   }
 
+  if (expr.kind === 'bin') {
+    return parseItem(expr.left) + parseItem(expr.right);
+  }
+
   if (expr.key) {
     return { [expr.key.value]: parseItem(expr.value) }
   }

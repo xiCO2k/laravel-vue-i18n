@@ -9,4 +9,9 @@ return [
         ]
     ],
     'arr' => ['foo', 'bar'],
+    'multiline' => 'Lorem ' .
+        'ipsum ' .
+        'dolor ' .
+        'sit ' . 
+        'amet.',
 ];

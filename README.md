@@ -210,7 +210,7 @@ import { loadLanguageAsync } from 'laravel-vue-i18n';
 
 ### `getActiveLanguage()`
 
-The `getActiveLanguage()` returns the language that is current beign used.
+The `getActiveLanguage()` returns the language that is currently being used.
 
 
 ```jsx

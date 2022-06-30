@@ -25,8 +25,8 @@ export default function i18n(langPath: string = 'lang') {
         return null;
       }
     },
-    configResolved(config) {
-      langPathAbsolute = config.root + path.sep + langPath
+    config(config) {
+      langPathAbsolute = langPath
 
       if (hasPhpTranslations(langPathAbsolute)) {
         /** @ts-ignore */

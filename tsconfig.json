@@ -1,30 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "es2015",
-      "es2017",
-      "dom"
-    ],
-    "module": "commonjs",
+    "target": "ES2020",
+    "module": "ES2020",
     "moduleResolution": "node",
-    "outDir": "dist",
-    "resolveJsonModule": true,
-    "declaration": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipDefaultLibCheck": true
+    "outDir": "dist"
   },
-  "files": [
-    "./node_modules/@types/node/index.d.ts"
-  ],
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/vite.ts",
+    "src/mix.ts",
+    "src/loader.ts",
   ],
   "rules": {
     "no-console": false

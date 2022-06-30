@@ -1,1 +1,1 @@
-require('./dist/vite');
+module.exports = require('./dist/vite');

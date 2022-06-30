@@ -33,7 +33,7 @@ mix.extend(
       let files = []
 
       config.watchOptions = {
-        ignored: /php_.*\.json/
+        ignored: /php.*\.json/
       }
 
       if (hasPhpTranslations(this.langPath)) {

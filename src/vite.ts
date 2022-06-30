@@ -5,6 +5,7 @@ import { parseAll, hasPhpTranslations } from './loader'
 export default function i18n(langPath: string = 'lang') {
   let langPathAbsolute: string
   let files: { name: string; path: string }[] = []
+  let exitHandlersBound = false;
 
   const cleanFiles = () => {
     files.forEach((file) => {
@@ -36,6 +37,20 @@ export default function i18n(langPath: string = 'lang') {
       files = parseAll(langPathAbsolute)
     },
     buildEnd: cleanFiles,
-    handleHotUpdate: cleanFiles
+    handleHotUpdate({ file }) {
+      console.log('hot', file)
+    },
+    configureServer(server) {
+      if (exitHandlersBound) {
+        return
+      }
+
+      process.on('exit', cleanFiles)
+      process.on('SIGINT', process.exit)
+      process.on('SIGTERM', process.exit)
+      process.on('SIGHUP', process.exit)
+
+      exitHandlersBound = true;
+    }
   }
 }

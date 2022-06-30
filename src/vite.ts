@@ -19,6 +19,12 @@ export default function i18n(langPath: string = 'lang') {
   return {
     name: 'i18n',
     enforce: 'post',
+    transform(src, id) {
+      if (/php.*\.json/.test(id)) {
+        console.log('hit here');
+        return null;
+      }
+    },
     configResolved(config) {
       langPathAbsolute = config.root + path.sep + langPath
 

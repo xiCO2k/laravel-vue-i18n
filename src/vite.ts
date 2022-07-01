@@ -20,25 +20,25 @@ export default function i18n(langPath: string = 'lang') {
   return {
     name: 'i18n',
     enforce: 'post',
-    transform(src, id) {
-      if (/php.*\.json/.test(id)) {
-        console.log('hit here');
-        return null;
-      }
-    },
     config(config) {
       langPathAbsolute = langPath
 
       if (hasPhpTranslations(langPathAbsolute)) {
         /** @ts-ignore */
-        process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
-      }
+        files = parseAll(langPathAbsolute)
 
-      files = parseAll(langPathAbsolute)
+        return {
+          define: {
+            'process.env.LARAVEL_VUE_I18N_HAS_PHP': 'true'
+          }
+        }
+      }
     },
     buildEnd: cleanFiles,
     handleHotUpdate({ file }) {
-      console.log('hot', file)
+      if (/lang\/.*\.php$/.test(file)) {
+        files = parseAll(langPathAbsolute)
+      }
     },
     configureServer(server) {
       if (exitHandlersBound) {

@@ -1,18 +1,12 @@
-import fs from 'fs'
-import path from 'path'
+import { existsSync, unlinkSync } from 'fs'
 import { parseAll, hasPhpTranslations } from './loader'
 
 export default function i18n(langPath: string = 'lang') {
-  let langPathAbsolute: string
   let files: { name: string; path: string }[] = []
-  let exitHandlersBound = false;
+  let exitHandlersBound: boolean = false
 
-  const cleanFiles = () => {
-    files.forEach((file) => {
-      if (fs.existsSync(file.path)) {
-        fs.unlinkSync(file.path)
-      }
-    })
+  const clean = () => {
+    files.forEach((file) => unlinkSync(file.path))
 
     files = []
   }
@@ -21,23 +15,22 @@ export default function i18n(langPath: string = 'lang') {
     name: 'i18n',
     enforce: 'post',
     config(config) {
-      langPathAbsolute = langPath
+      if (!hasPhpTranslations(langPath)) {
+        return
+      }
 
-      if (hasPhpTranslations(langPathAbsolute)) {
-        /** @ts-ignore */
-        files = parseAll(langPathAbsolute)
+      files = parseAll(langPath)
 
-        return {
-          define: {
-            'process.env.LARAVEL_VUE_I18N_HAS_PHP': 'true'
-          }
+      return {
+        define: {
+          'process.env.LARAVEL_VUE_I18N_HAS_PHP': true
         }
       }
     },
-    buildEnd: cleanFiles,
+    buildEnd: clean,
     handleHotUpdate({ file }) {
       if (/lang\/.*\.php$/.test(file)) {
-        files = parseAll(langPathAbsolute)
+        files = parseAll(langPath)
       }
     },
     configureServer(server) {
@@ -45,12 +38,12 @@ export default function i18n(langPath: string = 'lang') {
         return
       }
 
-      process.on('exit', cleanFiles)
+      process.on('exit', clean)
       process.on('SIGINT', process.exit)
       process.on('SIGTERM', process.exit)
       process.on('SIGHUP', process.exit)
 
-      exitHandlersBound = true;
+      exitHandlersBound = true
     }
   }
 }

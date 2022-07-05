@@ -21,6 +21,9 @@ export default function i18n(langPath: string = 'lang') {
 
       files = parseAll(langPath)
 
+      /** @ts-ignore */
+      process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true;
+
       return {
         define: {
           'process.env.LARAVEL_VUE_I18N_HAS_PHP': true
@@ -28,9 +31,33 @@ export default function i18n(langPath: string = 'lang') {
       }
     },
     buildEnd: clean,
-    handleHotUpdate({ file }) {
-      if (/lang\/.*\.php$/.test(file)) {
+    handleHotUpdate(ctx) {
+      if (/lang\/.*\.php$/.test(ctx.file)) {
+        const updates = [];
+
         files = parseAll(langPath)
+
+        files.forEach(({ path }) => {
+          let type;
+
+          if (path.endsWith('js') || path.endsWith('json')) {
+            type = 'js-update';
+          }
+
+          updates.push({
+            type: type,
+            path: path,
+            acceptedPath: path,
+            timestamp: (new Date).getTime(),
+          });
+        });
+
+        if (updates.length > 0) {
+          ctx.server.ws.send({
+            type: 'update',
+            updates,
+          });
+        }
       }
     },
     configureServer(server) {

@@ -15,6 +15,7 @@
 </p>
 
 ## Installation
+
 With [npm](https://www.npmjs.com):
 ```sh
 npm i laravel-vue-i18n
@@ -29,6 +30,71 @@ yarn add laravel-vue-i18n
 
 > If you want to see a screencast on how to setup check out this video: [How to use Laravel Vue i18n plugin](https://www.youtube.com/watch?v=ONRo8-i5Qsk).
 
+### With Vite
+
+```js
+import { createApp } from 'vue'
+import { i18nVue } from 'laravel-vue-i18n'
+
+createApp()
+    .use(i18nVue, {
+        resolve: async lang => {
+            const langs = import.meta.glob('../../lang/*.json');
+            return await langs[`../../lang/${lang}.json`]();
+        }
+    })
+    .mount('#app');
+```
+
+#### SSR (Server Side Rendering)
+
+For Server Side Rendering the resolve method should not receive a `Promise` and instead take advantage of the `globEager` method like this:
+
+```js
+.use(i18nVue, {
+    lang: 'pt',
+    resolve: lang => {
+        const langs = import.meta.globEager(`../../lang/${lang}.json`);
+        return langs[`../../lang/${lang}.json`].default;
+    },
+})
+```
+
+#### PHP Translations Available on Vue
+
+In order to load `php` translations, you can use this `Vite` plugin.
+
+```js
+// vite.config.js
+import i18n from 'laravel-vue-i18n/vite';
+
+export default defineConfig({
+    plugins: [
+        laravel([
+            'resources/css/app.css'
+            'resources/js/app.js',
+        ]),
+        vue(),
+
+        // Laravel >= 9
+        i18n(),
+
+        // Laravel < 9, since the lang folder is inside the resources folder
+        // you will need to pass as parameter:
+        // i18('resources/lang'),
+    ],
+});
+```
+
+> During the `npm run dev` execution time, the plugin will create some files like this `php_{lang}.json` on your lang folder.
+> And to avoid that to be commited to your code base, I suggest to your `.gitignore` this like:
+
+```bash
+lang/php_*.json
+```
+
+### With Webpack / Laravel Mix
+
 ```js
 import { createApp } from 'vue'
 import { i18nVue } from 'laravel-vue-i18n'
@@ -40,20 +106,9 @@ createApp()
     .mount('#app');
 ```
 
-### With `vite`
+#### SSR (Server Side Rendering)
 
-The `resolve` method will need to be:
-
-```js
-resolve: async lang => {
-    const langs = import.meta.glob('../../lang/*.json');
-    return await langs[`../../lang/${lang}.json`]();
-}
-````
-
-### With SSR
-
-The `resolve` method can receive a `require` instead of a `Promise`:
+For Server Side Rendering the resolve method should receive a `require` instead of a `Promise`:
 
 ```js
 .use(i18nVue, {
@@ -62,7 +117,7 @@ The `resolve` method can receive a `require` instead of a `Promise`:
 })
 ````
 
-### Laravel Mix Plugin
+#### PHP Translations Available on Vue
 
 In order to load `php` translations, you can use this `Mix` plugin.
 
@@ -74,8 +129,9 @@ require('laravel-vue-i18n/mix');
 mix.i18n();
 
 // Laravel < 9, since the lang folder is inside the resources folder
-// you will need to pass as parameter.
-mix.i18n('resources/lang');
+// you will need to pass as parameter:
+
+// mix.i18n('resources/lang');
 ```
 
 ### Usage

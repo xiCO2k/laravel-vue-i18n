@@ -22,7 +22,7 @@ export default function i18n(langPath: string = 'lang') {
       files = parseAll(langPath)
 
       /** @ts-ignore */
-      process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true;
+      process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
 
       return {
         define: {

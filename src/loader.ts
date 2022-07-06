@@ -20,8 +20,7 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
         return true
       }
     }
-  } catch (e) {
-  }
+  } catch (e) {}
 
   return false
 }

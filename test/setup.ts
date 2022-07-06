@@ -2,11 +2,12 @@ import { mount } from '@vue/test-utils'
 import { i18nVue } from '../src'
 import { parseAll } from '../src/loader'
 
-global.mountPlugin = async (template = '<div />', lang = 'pt') => {
+global.mountPlugin = async (template = '<div />', lang = 'pt', fallbackLang = 'pt') => {
   const wrapper = mount({ template }, {
     global: {
       plugins: [[i18nVue, {
         lang,
+        fallbackLang,
         resolve: lang => import(`./fixtures/lang/${lang}.json`),
       }]]
     }
@@ -17,11 +18,12 @@ global.mountPlugin = async (template = '<div />', lang = 'pt') => {
   return wrapper;
 }
 
-global.mountPluginWithRequire = async (template = '<div />', lang = 'pt') => {
+global.mountPluginWithRequire = async (template = '<div />', lang = 'pt', fallbackLang = 'pt') => {
   const wrapper = mount({ template }, {
     global: {
       plugins: [[i18nVue, {
         lang,
+        fallbackLang,
         resolve: (lang) => require(`./fixtures/lang/${lang}.json`),
       }]]
     }

@@ -38,7 +38,7 @@ const activeMessages: object = reactive({})
 export function isLoaded(lang?: string): boolean {
   lang ??= getActiveLanguage()
 
-  return loaded.some((row) => row.lang.replace(/[-_]/g, '-') === lang.replace(/[-_]/g, '-'));
+  return loaded.some((row) => row.lang.replace(/[-_]/g, '-') === lang.replace(/[-_]/g, '-'))
 }
 
 /**
@@ -53,14 +53,14 @@ export function loadLanguageAsync(lang: string, dashLangTry = false): Promise<st
 
   return resolveLang(options.resolve, lang).then(({ default: messages }) => {
     if (Object.keys(messages).length < 1) {
-      if (/[-_]/g.test(lang) && ! dashLangTry) {
+      if (/[-_]/g.test(lang) && !dashLangTry) {
         return loadLanguageAsync(
-          lang.replace(/[-_]/g, char => char === '-' ? '_' : '-'),
+          lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
           true
-        );
+        )
       }
       if (lang !== options.fallbackLang) {
-        return loadLanguageAsync(options.fallbackLang);
+        return loadLanguageAsync(options.fallbackLang)
       }
     }
 

@@ -140,7 +140,6 @@ async function resolveLang(callable: Function, lang: string): Promise<LanguageJs
     ? true
     /** @ts-ignore */
     : import.meta.env.VITE_LARAVEL_VUE_I18N_HAS_PHP ? true : false;
-  console.log('here', hasPhpTranslations);
 
   let data = avoidException(callable, lang)
 

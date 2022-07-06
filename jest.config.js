@@ -4,7 +4,8 @@ module.exports = {
   preset: 'ts-jest',
   globals: {
     'ts-jest': {
-      babelConfig: true
+      tsconfig: './tsconfig.plugins.json',
+      babelConfig: './babel.config.js',
     }
   },
   testEnvironment: 'jsdom',

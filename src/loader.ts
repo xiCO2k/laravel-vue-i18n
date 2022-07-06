@@ -21,7 +21,6 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
       }
     }
   } catch (e) {
-    console.log(e.message)
   }
 
   return false

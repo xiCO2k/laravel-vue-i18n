@@ -52,17 +52,25 @@ export const parseAll = (folderPath: string): { name: string; path: string }[] =
     })
   }
 
-  return data.map(({ folder, translations }) => {
-    const name = `php_${folder}.json`
-    const path = folderPath + name
+  return data
+    .filter(({ translations }) => {
+      return Object.keys(translations).length > 0
+    })
+    .map(({ folder, translations }) => {
+      const name = `php_${folder}.json`
+      const path = folderPath + name
 
-    fs.writeFileSync(path, JSON.stringify(translations))
-    return { name, path }
-  })
+      fs.writeFileSync(path, JSON.stringify(translations))
+      return { name, path }
+    })
 }
 
 export const parse = (content: string) => {
   const arr = new Engine({}).parseCode(content, 'lang').children.filter((child) => child.kind === 'return')[0] as any
+
+  if (arr?.expr?.kind !== 'array') {
+    return {}
+  }
 
   return convertToDotsSyntax(parseItem(arr.expr))
 }

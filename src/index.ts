@@ -12,7 +12,8 @@ const isServer = typeof window === 'undefined'
  * The default options, for the plugin.
  */
 const DEFAULT_OPTIONS: OptionsInterface = {
-  lang: !isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : 'en',
+  lang: !isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : null,
+  fallbackLang: 'en',
   resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} }))
 }
 
@@ -36,17 +37,14 @@ const activeMessages: object = reactive({})
  */
 export function isLoaded(lang?: string): boolean {
   lang ??= getActiveLanguage()
-  lang = lang.replace('-', '_')
 
-  return loaded.some((row) => row.lang === lang)
+  return loaded.some((row) => row.lang.replace(/[-_]/g, '-') === lang.replace(/[-_]/g, '-'))
 }
 
 /**
  * Loads the language file.
  */
-export function loadLanguageAsync(lang: string): Promise<string | void> {
-  lang = lang.replace('-', '_')
-
+export function loadLanguageAsync(lang: string, dashLangTry = false): Promise<string | void> {
   const loadedLang: LanguageInterface = loaded.find((row) => row.lang === lang)
 
   if (loadedLang) {
@@ -54,6 +52,18 @@ export function loadLanguageAsync(lang: string): Promise<string | void> {
   }
 
   return resolveLang(options.resolve, lang).then(({ default: messages }) => {
+    if (Object.keys(messages).length < 1) {
+      if (/[-_]/g.test(lang) && !dashLangTry) {
+        return loadLanguageAsync(
+          lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
+          true
+        )
+      }
+      if (lang !== options.fallbackLang) {
+        return loadLanguageAsync(options.fallbackLang)
+      }
+    }
+
     const data: LanguageInterface = { lang, messages }
     loaded.push(data)
     return setLanguage(data)
@@ -104,7 +114,7 @@ export function wTransChoice(
  * Returns the current active language.
  */
 export function getActiveLanguage(): string {
-  return options.lang
+  return options.lang || options.fallbackLang
 }
 
 /**
@@ -225,6 +235,6 @@ export const i18nVue: Plugin = {
     app.config.globalProperties.$t = (key: string, replacements: ReplacementsInterface) => trans(key, replacements)
     app.config.globalProperties.$tChoice = (key: string, number: number, replacements: ReplacementsInterface) =>
       transChoice(key, number, replacements)
-    loadLanguageAsync(options.lang)
+    loadLanguageAsync(options.lang || options.fallbackLang)
   }
 }

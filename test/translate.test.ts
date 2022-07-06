@@ -36,6 +36,17 @@ it('returns the same string given if it is not found on the lang file', async ()
   expect(wrapper.html()).toBe('<h1>This has no translation</h1>')
 })
 
+it('fallback to the `fallbackLang` if the `lang` was not provided', async () => {
+  await global.mountPlugin(`<div />`, null, 'pt');
+  expect(trans('Welcome!')).toBe('Bem-vindo!');
+})
+
+it('fallback to the `fallbackLang` if the `lang` was not found', async () => {
+  await global.mountPlugin(`<div />`, 'ch', 'pt');
+
+  expect(trans('Welcome!')).toBe('Bem-vindo!');
+});
+
 it('returns the given key if the key is not available on the lang', async () => {
   await global.mountPlugin(`<div />`, 'en');
   expect(trans('Only Available on EN')).toBe('Only Available on EN');

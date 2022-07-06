@@ -147,7 +147,8 @@ mix.i18n();
 
 ### Plugin Options
 
-- `lang` *(optional)*: if not provided it will try to find from the `<html lang="pt">` tag, if is not available it will default to `en`.
+- `lang` *(optional)*: If not provided it will try to find from the `<html lang="pt">` tag.
+- `fallbackLang` *(optional): If the `lang` was not provided or is invalid, it will try reach for this `fallbackLang` instead, default is: `en`.
 - `resolve` *(required)*: The way to reach your language files.
 
 ```js

@@ -20,9 +20,7 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
         return true
       }
     }
-  } catch (e) {
-    console.log(e.message)
-  }
+  } catch (e) {}
 
   return false
 }
@@ -85,7 +83,7 @@ const parseItem = (expr) => {
   }
 
   if (expr.kind === 'bin') {
-    return parseItem(expr.left) + parseItem(expr.right);
+    return parseItem(expr.left) + parseItem(expr.right)
   }
 
   if (expr.key) {

@@ -1,27 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "lib": [
-      "es2015",
-      "es2017",
-      "dom"
-    ],
-    "module": "commonjs",
-    "outDir": "dist",
-    "sourceMap": true,
-    "declaration": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipDefaultLibCheck": true
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "dist"
   },
-  "files": [
-    "./node_modules/@types/node/index.d.ts"
-  ],
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/vite.ts",
+    "src/mix.ts",
+    "src/loader.ts",
   ],
   "rules": {
     "no-console": false

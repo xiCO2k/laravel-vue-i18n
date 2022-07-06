@@ -16,11 +16,14 @@
   "description": "allows to connect your `Laravel` Framework localization files with `Vue`.",
   "main": "dist/index.js",
   "scripts": {
-    "tsc": "tsc --watch",
+    "watch": "tsc --watch",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "prettier -c \"src/**/*.(ts|js|vue)\" --write",
-    "prepare": "tsc",
+    "build:plugins": "tsc -p tsconfig.plugins.json",
+    "build:client": "tsc -p tsconfig.json",
+    "build": "npm run build:plugins && npm run build:client",
+    "prepare": "npm run build",
     "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push --tags"
   },
   "devDependencies": {
@@ -29,6 +32,7 @@
     "@vue/babel-plugin-jsx": "^1.1.1",
     "@vue/test-utils": "^2.0.0",
     "babel-jest": "^27.5.1",
+    "babel-plugin-transform-vite-meta-env": "^1.0.3",
     "jest": "^27.5.1",
     "prettier": "^2.7.1",
     "ts-jest": "^27.1.3",
@@ -36,8 +40,8 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "vue": "^3.2.37",
-    "php-parser": "3.1.0-beta.4"
+    "php-parser": "3.1.0-beta.4",
+    "vue": "^3.2.37"
   },
   "peerDependencies": {
     "laravel-mix": "^6.0.43"

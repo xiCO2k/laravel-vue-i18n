@@ -149,7 +149,7 @@ async function resolveLang(callable: Function, lang: string): Promise<LanguageJs
     typeof process !== 'undefined' && process.env?.LARAVEL_VUE_I18N_HAS_PHP
       ? true
       : /** @ts-ignore */
-      import.meta.env.VITE_LARAVEL_VUE_I18N_HAS_PHP
+      typeof import.meta.env !== 'undefined' && import.meta.env.VITE_LARAVEL_VUE_I18N_HAS_PHP
       ? true
       : false
 

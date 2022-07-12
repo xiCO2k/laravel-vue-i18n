@@ -38,12 +38,28 @@ export const parseAll = (folderPath: string): { name: string; path: string }[] =
     const lang = {}
 
     fs.readdirSync(folderPath + path.sep + folder)
-      .filter((file) => !fs.statSync(folderPath + path.sep + folder + path.sep + file).isDirectory())
       .sort()
-      .forEach((file) => {
-        lang[file.replace(/\.\w+$/, '')] = parse(
-          fs.readFileSync(folderPath + path.sep + folder + path.sep + file).toString()
-        )
+      .forEach((langFolderItem) => {
+        const langFolderPath = folderPath + path.sep + folder
+        const langFolderItemPath = langFolderPath + path.sep + langFolderItem
+
+        if (fs.statSync(langFolderItemPath).isDirectory()) {
+          // Lang sub folder
+          const subFolderFileKey = langFolderItem.replace(/\.\w+$/, '')
+          lang[subFolderFileKey] = {}
+
+          fs.readdirSync(langFolderItemPath)
+            .filter((file) => !fs.statSync(langFolderItemPath + path.sep + file).isDirectory())
+            .sort()
+            .forEach((file) => {
+              lang[subFolderFileKey][file.replace(/\.\w+$/, '')] = parse(
+                fs.readFileSync(langFolderItemPath + path.sep + file).toString()
+              )
+            })
+        } else {
+          // Lang file
+          lang[langFolderItem.replace(/\.\w+$/, '')] = parse(fs.readFileSync(langFolderItemPath).toString())
+        }
       })
 
     data.push({

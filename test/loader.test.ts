@@ -21,6 +21,15 @@ it('creates a file for each lang', () => {
     expect(langPt['auth.foo.level1.level2']).toBe('barpt');
 });
 
+it('includes .php lang file in subdirectory in .json', () => {
+    const files = parseAll(__dirname + '/fixtures/lang/');
+    const langEn = JSON.parse(fs.readFileSync(files[0].path).toString());
+
+    expect(langEn['domain.user.sub_dir_support_is_amazing']).toBe('Subdirectory support is amazing');
+    expect(langEn['domain.car.is_electric']).toBe('Electric');
+    expect(langEn['domain.car.foo.level1.level2']).toBe('barpt');
+});
+
 it('transforms .php lang to .json', () => {
     const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());
 

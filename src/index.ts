@@ -49,14 +49,14 @@ function loadLanguage(lang: string, dashLangTry: boolean = false): void {
   const loadedLang: LanguageInterface = loaded.find((row) => row.lang === lang)
 
   if (loadedLang) {
-    setLanguage(loadedLang);
+    setLanguage(loadedLang)
 
-    return;
+    return
   }
 
-  const { default: messages } = resolveLang(options.resolve, lang);
+  const { default: messages } = resolveLang(options.resolve, lang)
 
-  applyLanguage(lang, messages, dashLangTry, loadLanguage);
+  applyLanguage(lang, messages, dashLangTry, loadLanguage)
 }
 
 /**
@@ -88,11 +88,11 @@ function applyLanguage(
       return callable(
         lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
         true
-      );
+      )
     }
 
     if (lang !== options.fallbackLang) {
-      return callable(options.fallbackLang);
+      return callable(options.fallbackLang)
     }
   }
 
@@ -176,16 +176,22 @@ function setLanguage({ lang, messages }: LanguageInterface): string {
 /**
  * It resolves the language file or data, from direct data, syncrone.
  */
-function resolveLang(callable: Function, lang: string, data: { [key: string]: string } = {}): LanguageJsonFileInterface {
-  if (! Object.keys(data).length) {
+function resolveLang(
+  callable: Function,
+  lang: string,
+  data: { [key: string]: string } = {}
+): LanguageJsonFileInterface {
+  if (!Object.keys(data).length) {
     data = avoidException(callable, lang)
   }
 
   if (hasPhpTranslations(isServer)) {
-    return { default: {
-      ...data,
-      ...avoidException(callable, `php_${lang}`)
-    } }
+    return {
+      default: {
+        ...data,
+        ...avoidException(callable, `php_${lang}`)
+      }
+    }
   }
 
   return { default: data }
@@ -197,8 +203,8 @@ function resolveLang(callable: Function, lang: string, data: { [key: string]: st
 async function resolveLangAsync(callable: Function, lang: string): Promise<LanguageJsonFileInterface> {
   let data = avoidException(callable, lang)
 
-  if (! (data instanceof Promise)) {
-    return resolveLang(callable, lang, data);
+  if (!(data instanceof Promise)) {
+    return resolveLang(callable, lang, data)
   }
 
   if (hasPhpTranslations(isServer)) {

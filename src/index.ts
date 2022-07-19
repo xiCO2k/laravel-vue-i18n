@@ -42,6 +42,9 @@ export function isLoaded(lang?: string): boolean {
   return loaded.some((row) => row.lang.replace(/[-_]/g, '-') === lang.replace(/[-_]/g, '-'))
 }
 
+/**
+ * Loads the language async.
+ */
 function loadLanguage(lang: string, dashLangTry: boolean = false): void {
   const loadedLang: LanguageInterface = loaded.find((row) => row.lang === lang)
 
@@ -53,22 +56,7 @@ function loadLanguage(lang: string, dashLangTry: boolean = false): void {
 
   const { default: messages } = resolveLang(options.resolve, lang);
 
-  if (Object.keys(messages).length < 1) {
-    if (/[-_]/g.test(lang) && !dashLangTry) {
-      return loadLanguage(
-        lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
-        true
-      );
-    }
-
-    if (lang !== options.fallbackLang) {
-      return loadLanguage(options.fallbackLang);
-    }
-  }
-
-  const data: LanguageInterface = { lang, messages }
-  loaded.push(data)
-  setLanguage(data)
+  applyLanguage(lang, messages, dashLangTry, loadLanguage);
 }
 
 /**
@@ -81,23 +69,37 @@ export function loadLanguageAsync(lang: string, dashLangTry = false): Promise<st
     return Promise.resolve(setLanguage(loadedLang))
   }
 
-  return resolveLangAsync(options.resolve, lang).then(({ default: messages }) => {
-    if (Object.keys(messages).length < 1) {
-      if (/[-_]/g.test(lang) && !dashLangTry) {
-        return loadLanguageAsync(
-          lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
-          true
-        )
-      }
-      if (lang !== options.fallbackLang) {
-        return loadLanguageAsync(options.fallbackLang)
-      }
+  return resolveLangAsync(options.resolve, lang).then(({ default: messages }) =>
+    applyLanguage(lang, messages, dashLangTry, loadLanguageAsync)
+  )
+}
+
+/**
+ * Applies the language data and saves it to the loaded storage.
+ */
+function applyLanguage(
+  lang: string,
+  messages: { [key: string]: string },
+  dashLangTry: boolean = false,
+  callable: Function
+): string {
+  if (Object.keys(messages).length < 1) {
+    if (/[-_]/g.test(lang) && !dashLangTry) {
+      return callable(
+        lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
+        true
+      );
     }
 
-    const data: LanguageInterface = { lang, messages }
-    loaded.push(data)
-    return setLanguage(data)
-  })
+    if (lang !== options.fallbackLang) {
+      return callable(options.fallbackLang);
+    }
+  }
+
+  const data: LanguageInterface = { lang, messages }
+  loaded.push(data)
+
+  return setLanguage(data)
 }
 
 /**
@@ -171,6 +173,9 @@ function setLanguage({ lang, messages }: LanguageInterface): string {
   return lang
 }
 
+/**
+ * It resolves the language file or data, from direct data, syncrone.
+ */
 function resolveLang(callable: Function, lang: string, data: { [key: string]: string } = {}): LanguageJsonFileInterface {
   if (! Object.keys(data).length) {
     data = avoidException(callable, lang)
@@ -192,29 +197,29 @@ function resolveLang(callable: Function, lang: string, data: { [key: string]: st
 async function resolveLangAsync(callable: Function, lang: string): Promise<LanguageJsonFileInterface> {
   let data = avoidException(callable, lang)
 
-  if (data instanceof Promise) {
-    if (hasPhpTranslations(isServer)) {
-      const phpLang = await avoidExceptionOnPromise(callable(`php_${lang}`))
-      const jsonLang = await avoidExceptionOnPromise(data)
+  if (! (data instanceof Promise)) {
+    return resolveLang(callable, lang, data);
+  }
 
-      return new Promise((resolve) =>
-        resolve({
-          default: {
-            ...phpLang,
-            ...jsonLang
-          }
-        })
-      )
-    }
+  if (hasPhpTranslations(isServer)) {
+    const phpLang = await avoidExceptionOnPromise(callable(`php_${lang}`))
+    const jsonLang = await avoidExceptionOnPromise(data)
 
-    return new Promise(async (resolve) =>
+    return new Promise((resolve) =>
       resolve({
-        default: await avoidExceptionOnPromise(data)
+        default: {
+          ...phpLang,
+          ...jsonLang
+        }
       })
     )
   }
 
-  return resolveLang(callable, lang, data);
+  return new Promise(async (resolve) =>
+    resolve({
+      default: await avoidExceptionOnPromise(data)
+    })
+  )
 }
 
 /**

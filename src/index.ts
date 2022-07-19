@@ -42,7 +42,7 @@ export function isLoaded(lang?: string): boolean {
   return loaded.some((row) => row.lang.replace(/[-_]/g, '-') === lang.replace(/[-_]/g, '-'))
 }
 
-function loadLanguage(lang: string): void {
+function loadLanguage(lang: string, dashLangTry: boolean = false): void {
   const loadedLang: LanguageInterface = loaded.find((row) => row.lang === lang)
 
   if (loadedLang) {
@@ -52,6 +52,20 @@ function loadLanguage(lang: string): void {
   }
 
   const { default: messages } = resolveLang(options.resolve, lang);
+
+  if (Object.keys(messages).length < 1) {
+    if (/[-_]/g.test(lang) && !dashLangTry) {
+      return loadLanguage(
+        lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
+        true
+      );
+    }
+
+    if (lang !== options.fallbackLang) {
+      return loadLanguage(options.fallbackLang);
+    }
+  }
+
   const data: LanguageInterface = { lang, messages }
   loaded.push(data)
   setLanguage(data)

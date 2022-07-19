@@ -54,7 +54,7 @@ For Server Side Rendering the resolve method should not receive a `Promise` and 
 .use(i18nVue, {
     lang: 'pt',
     resolve: lang => {
-        const langs = import.meta.globEager(`../../lang/${lang}.json`);
+        const langs = import.meta.globEager('../../lang/*.json');
         return langs[`../../lang/${lang}.json`].default;
     },
 })

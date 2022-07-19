@@ -5,6 +5,7 @@ import { LanguageJsonFileInterface } from './interfaces/language-json-file'
 import { ReplacementsInterface } from './interfaces/replacements'
 import { choose } from './pluralization'
 import { avoidExceptionOnPromise, avoidException } from './utils/avoid-exceptions'
+import { hasPhpTranslations } from './utils/has-php-translations'
 
 const isServer = typeof window === 'undefined'
 
@@ -41,6 +42,21 @@ export function isLoaded(lang?: string): boolean {
   return loaded.some((row) => row.lang.replace(/[-_]/g, '-') === lang.replace(/[-_]/g, '-'))
 }
 
+function loadLanguage(lang: string): void {
+  const loadedLang: LanguageInterface = loaded.find((row) => row.lang === lang)
+
+  if (loadedLang) {
+    setLanguage(loadedLang);
+
+    return;
+  }
+
+  const { default: messages } = resolveLang(options.resolve, lang);
+  const data: LanguageInterface = { lang, messages }
+  loaded.push(data)
+  setLanguage(data)
+}
+
 /**
  * Loads the language file.
  */
@@ -51,7 +67,7 @@ export function loadLanguageAsync(lang: string, dashLangTry = false): Promise<st
     return Promise.resolve(setLanguage(loadedLang))
   }
 
-  return resolveLang(options.resolve, lang).then(({ default: messages }) => {
+  return resolveLangAsync(options.resolve, lang).then(({ default: messages }) => {
     if (Object.keys(messages).length < 1) {
       if (/[-_]/g.test(lang) && !dashLangTry) {
         return loadLanguageAsync(
@@ -141,22 +157,29 @@ function setLanguage({ lang, messages }: LanguageInterface): string {
   return lang
 }
 
+function resolveLang(callable: Function, lang: string, data: { [key: string]: string } = {}): LanguageJsonFileInterface {
+  if (! Object.keys(data).length) {
+    data = avoidException(callable, lang)
+  }
+
+  if (hasPhpTranslations(isServer)) {
+    return { default: {
+      ...data,
+      ...avoidException(callable, `php_${lang}`)
+    } }
+  }
+
+  return { default: data }
+}
+
 /**
  * It resolves the language file or data, from direct data, require or Promise.
  */
-async function resolveLang(callable: Function, lang: string): Promise<LanguageJsonFileInterface> {
-  const hasPhpTranslations =
-    typeof process !== 'undefined' && process.env?.LARAVEL_VUE_I18N_HAS_PHP
-      ? true
-      : /** @ts-ignore */
-      typeof import.meta.env !== 'undefined' && import.meta.env.VITE_LARAVEL_VUE_I18N_HAS_PHP
-      ? true
-      : false
-
+async function resolveLangAsync(callable: Function, lang: string): Promise<LanguageJsonFileInterface> {
   let data = avoidException(callable, lang)
 
   if (data instanceof Promise) {
-    if (hasPhpTranslations) {
+    if (hasPhpTranslations(isServer)) {
       const phpLang = await avoidExceptionOnPromise(callable(`php_${lang}`))
       const jsonLang = await avoidExceptionOnPromise(data)
 
@@ -177,18 +200,7 @@ async function resolveLang(callable: Function, lang: string): Promise<LanguageJs
     )
   }
 
-  if (hasPhpTranslations) {
-    return new Promise((resolve) =>
-      resolve({
-        default: {
-          ...data,
-          ...avoidException(callable, `php_${lang}`)
-        }
-      })
-    )
-  }
-
-  return new Promise((resolve) => resolve({ default: data }))
+  return resolveLang(callable, lang, data);
 }
 
 /**
@@ -235,6 +247,11 @@ export const i18nVue: Plugin = {
     app.config.globalProperties.$t = (key: string, replacements: ReplacementsInterface) => trans(key, replacements)
     app.config.globalProperties.$tChoice = (key: string, number: number, replacements: ReplacementsInterface) =>
       transChoice(key, number, replacements)
-    loadLanguageAsync(options.lang || options.fallbackLang)
+
+    if (isServer) {
+      loadLanguage(options.lang || options.fallbackLang)
+    } else {
+      loadLanguageAsync(options.lang || options.fallbackLang)
+    }
   }
 }

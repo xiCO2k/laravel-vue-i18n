@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ES2020",
+    "target": "ES2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "declaration": true,
     "esModuleInterop": true,
-    "outDir": "dist"
+    "allowSyntheticDefaultImports": true,
+    "skipDefaultLibCheck": true,
+    "outDir": "dist/cjs"
   },
   "include": [
     "src/**/*.ts"

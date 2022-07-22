@@ -8,5 +8,5 @@ function checkProcessEnv(): boolean {
 
 function checkImportMeta(): boolean {
   /** @ts-ignore */
-  return import.meta.env.VITE_LARAVEL_VUE_I18N_HAS_PHP ? true : false
+  return typeof import.meta.env.VITE_LARAVEL_VUE_I18N_HAS_PHP !== 'undefined' && import.meta.env.VITE_LARAVEL_VUE_I18N_HAS_PHP ? true : false
 }

@@ -10,6 +10,9 @@ import { hasPhpTranslations } from './utils/has-php-translations'
 
 const isServer = typeof window === 'undefined'
 
+/**
+ * Stores the shared i18n class instance
+ */
 let sharedInstance: I18n = null
 
 /**
@@ -111,7 +114,7 @@ export class I18n {
   /**
    * Stores the loaded languages.
    */
-  static loaded: LanguageInterface[] = []
+  private static loaded: LanguageInterface[] = []
 
   // Stores options for the current instance
   private options: OptionsInterface

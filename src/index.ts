@@ -113,6 +113,9 @@ export const i18nVue: Plugin = {
   }
 }
 
+/**
+ * The I18n class. Encapsulates all language loading and translation logic.
+ */
 export class I18n {
   /**
    * Stores the loaded languages.

@@ -123,19 +123,19 @@ export class I18n {
   private activeMessages: object = reactive({})
 
   /**
-   * Creates a new instance of the I18n class
+   * Creates a new instance of the I18n class, applying default options
    */
   constructor(options: OptionsInterface = {}) {
-    this.setOptions(options)
+    this.options = { ...DEFAULT_OPTIONS, ...options }
 
     this[isServer ? 'loadLanguage' : 'loadLanguageAsync'](this.getActiveLanguage())
   }
 
   /**
-   * Sets options on the instance
+   * Sets options on the instance, preserving any values not present in new options
    */
   setOptions(options: OptionsInterface = {}): I18n {
-    this.options = { ...DEFAULT_OPTIONS, ...options }
+    this.options = { ...this.options, ...options }
 
     return this
   }

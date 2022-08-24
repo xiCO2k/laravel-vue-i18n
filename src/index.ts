@@ -16,7 +16,7 @@ const isServer = typeof window === 'undefined'
 let sharedInstance: I18n = null
 
 /**
- * The default options, for the plugin.
+ * The default options, for the I18n class
  */
 const DEFAULT_OPTIONS: OptionsInterface = {
   lang: !isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : null,
@@ -24,6 +24,9 @@ const DEFAULT_OPTIONS: OptionsInterface = {
   resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} }))
 }
 
+/**
+ * The default options, for the plugin.
+ */
 const DEFAULT_PLUGIN_OPTIONS: PluginOptionsInterface = {
   shared: true
 }

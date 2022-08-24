@@ -365,6 +365,6 @@ export class I18n {
    * Gets the shared I18n instance, instantiating it if not yet created
    */
   static getSharedInstance(options?: OptionsInterface): I18n {
-    return (sharedInstance ??= new I18n(options))
+    return sharedInstance?.setOptions(options) || (sharedInstance = new I18n(options))
   }
 }

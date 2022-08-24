@@ -85,7 +85,7 @@ export function getActiveLanguage(): string {
  * Resets all the data stored in memory.
  */
 export const reset = (): void => {
-  return I18n.getSharedInstance().reset()
+  sharedInstance?.reset() // avoid creating a shared instance here
 }
 
 /**

@@ -355,6 +355,10 @@ export class I18n {
     for (const [key] of Object.entries(this.activeMessages)) {
       this.activeMessages[key] = null
     }
+
+    if (this === sharedInstance) {
+      sharedInstance = null
+    }
   }
 
   /**

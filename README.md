@@ -139,7 +139,7 @@ mix.i18n();
 ```html
 <template>
     <div>
-        <h1>{{ $t('Welcome :name!', { name: 'Francisco' }) }}. </h1>
+        <h1>{{ $t('Welcome, :name!', { name: 'Francisco' }) }}. </h1>
         <div>Logged in {{ $tChoice('{1} :count minute ago|[2,*] :count minutes ago', 10) }}</div>
     </div>
 </template>

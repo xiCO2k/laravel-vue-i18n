@@ -148,8 +148,9 @@ mix.i18n();
 ### Plugin Options
 
 - `lang` *(optional)*: If not provided it will try to find from the `<html lang="pt">` tag.
-- `fallbackLang` *(optional): If the `lang` was not provided or is invalid, it will try reach for this `fallbackLang` instead, default is: `en`.
+- `fallbackLang` *(optional)*: If the `lang` was not provided or is invalid, it will try reach for this `fallbackLang` instead, default is: `en`.
 - `resolve` *(required)*: The way to reach your language files.
+- `shared` *(optional)*: whether to [share the same `I18n` instance](#using-multiple-instances) between different Vue apps. Defaults to `true`.
 
 ```js
 createApp().use(i18nVue, {
@@ -193,7 +194,7 @@ setup() {
     return {
         welcomeLabel: wTrans('Welcome!'),
         welcomeFrancisco: wTrans('Welcome, :name!', { name: 'Francisco' })
-    } 
+    }
 }
 
 <template>
@@ -243,7 +244,7 @@ setup() {
     return {
         oneAppleLabel: wTransChoice('There is one apple|There are many apples', 1),
         multipleApplesLabel: wTransChoice('{0} There are none|[1,19] There are some|[20,*] There are many', 19)
-    } 
+    }
 }
 
 <template>
@@ -287,3 +288,78 @@ import { isLoaded } from 'laravel-vue-i18n';
 const loaded = isLoaded(); // true
 const loaded = isLoaded('fr'); // false
 ```
+
+## Using multiple instances
+
+Under the hood, the Vue plugin is using a `I18n` class which encapsulates all the translation logic and the currently active language. This means that it's possible to create multiple class instances, each with different options and active language. This can be useful for scenarios where part of the app needs to be translated to a language different from the main UI.
+
+Note that loaded languages are still shared between different instances. This avoids loading the same set of translations multiple times. The main difference between different instances will be the currently active language.
+
+```js
+import { I18n } from 'laravel-vue-i18n'
+
+const resolver = lang => import(`./fixtures/lang/${lang}.json`)
+
+const i18nEn = new I18n({
+    lang: 'en',
+    resolve: resolver
+})
+const i18nPt = new I18n({
+    lang: 'pt',
+    resolve: resolver
+})
+
+i18nEn.trans('Welcome!') // will output "Welcome!"
+i18nPt.trans('Welcome!') // will output "Bem-vindo!"
+```
+
+By default, installing the the `i18nVue` plugin will create a shared instance. This instance is accessed when importing the translation functions, such as `trans`, directly. When using multiple Vue app instances, it's possible to either share the `I18n` instance between them, or have each app create its own instance.
+
+**Shared usage (default)** - all Vue app instances will use the same `I18n` class and currently active language:
+```js
+import { i18nVue } from 'laravel-vue-i18n'
+
+const appA = createApp()
+    .use(i18nVue, { lang: 'pt' })
+    .mount('#app-1');
+
+const appB = createApp()
+    .use(i18nVue)
+    .mount('#app-2');
+
+// elsewhere
+import { trans } from 'laravel-vue-i18n'
+
+trans('Welcome!') // will output "Bem-vindo!"
+```
+
+**Non-shared usage** - each Vue app will have its own `I18n` instance & currently active language.
+```js
+import { i18nVue } from 'laravel-vue-i18n'
+
+const appA = createApp()
+    .use(i18nVue, {
+        lang: 'es'
+        shared: false, // don't use the shared instance
+    })
+    .mount('#app-1');
+
+const appB = createApp()
+    .use(i18nVue, {
+        lang: 'pt'
+        shared: false, // don't use the shared instance
+    })
+    .mount('#app-2');
+```
+
+### Accessing the shared instance
+It's possible to access the shared instance via code as well:
+
+```js
+import { I18n } from 'laravel-vue-i18n'
+
+I18n.getSharedInstance()
+```
+### Caveats
+
+It is possible to import a translation function before installing the `i18nVue` plugin. When calling the translation function, ie `trans()`, and the plugin has not been installed, a shared `I18n` instance will be created with default options. This ensures that it's possible to import and call these functions without any fatal errors. However, this may yield undesired results. Therefore, it is advisable to never call any translation methods before the plugin is installed.

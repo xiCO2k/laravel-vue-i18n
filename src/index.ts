@@ -103,7 +103,7 @@ export const i18nVue: Plugin = {
   install(app, options: PluginOptionsInterface = {}) {
     options = { ...DEFAULT_PLUGIN_OPTIONS, ...options }
 
-    const i18n = options.shared ? I18n.getSharedInstance(options) : new I18n(options)
+    const i18n = options.shared ? I18n.getSharedInstance(options, true) : new I18n(options)
 
     app.config.globalProperties.$t = (key: string, replacements: ReplacementsInterface) => i18n.trans(key, replacements)
     app.config.globalProperties.$tChoice = (key: string, number: number, replacements: ReplacementsInterface) =>
@@ -134,16 +134,27 @@ export class I18n {
   constructor(options: OptionsInterface = {}) {
     this.options = { ...DEFAULT_OPTIONS, ...options }
 
-    this[isServer ? 'loadLanguage' : 'loadLanguageAsync'](this.getActiveLanguage())
+    this.load();
   }
 
   /**
    * Sets options on the instance, preserving any values not present in new options
    */
-  setOptions(options: OptionsInterface = {}): I18n {
+  setOptions(options: OptionsInterface = {}, forceLoad: boolean = false): I18n {
     this.options = { ...this.options, ...options }
 
+    if (forceLoad) {
+      this.load();
+    }
+
     return this
+  }
+
+  /**
+   * Loads the language.
+   */
+  load(): void {
+    this[isServer ? 'loadLanguage' : 'loadLanguageAsync'](this.getActiveLanguage())
   }
 
   /**
@@ -370,7 +381,7 @@ export class I18n {
   /**
    * Gets the shared I18n instance, instantiating it if not yet created
    */
-  static getSharedInstance(options?: OptionsInterface): I18n {
-    return sharedInstance?.setOptions(options) || (sharedInstance = new I18n(options))
+  static getSharedInstance(options?: OptionsInterface, forceLoad: boolean = false): I18n {
+    return sharedInstance?.setOptions(options, forceLoad) || (sharedInstance = new I18n(options))
   }
 }

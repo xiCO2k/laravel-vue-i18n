@@ -128,6 +128,9 @@ export class I18n {
   // Stores messages for the currently active language
   private activeMessages: object = reactive({})
 
+  // Stores the abort controller for the load promises.
+  private abortController: AbortController;
+
   /**
    * Creates a new instance of the I18n class, applying default options
    */
@@ -177,15 +180,28 @@ export class I18n {
   /**
    * Loads the language file.
    */
-  async loadLanguageAsync(lang: string, dashLangTry = false): Promise<string | void> {
+  loadLanguageAsync(lang: string, dashLangTry = false, ignoreAbort = false): Promise<string | void> {
+    if (! ignoreAbort) {
+      this.abortController?.abort();
+      this.abortController = new AbortController();
+    }
+
     const loadedLang: LanguageInterface = I18n.loaded.find((row) => row.lang === lang)
 
     if (loadedLang) {
       return Promise.resolve(this.setLanguage(loadedLang))
     }
 
-    const { default: messages } = await this.resolveLangAsync(this.options.resolve, lang)
-    return this.applyLanguage(lang, messages, dashLangTry, this.loadLanguageAsync)
+    return new Promise((resolve, reject) => {
+      this.abortController.signal.addEventListener('abort', () => {
+        resolve();
+      });
+
+      this.resolveLangAsync(this.options.resolve, lang).then(({ default: messages }) => {
+        resolve(this.applyLanguage(lang, messages, dashLangTry, this.loadLanguageAsync));
+      });
+    });
+
   }
 
   /**
@@ -253,12 +269,13 @@ export class I18n {
         return callable.call(
           this,
           lang.replace(/[-_]/g, (char) => (char === '-' ? '_' : '-')),
+          true,
           true
         )
       }
 
       if (lang !== this.options.fallbackLang) {
-        return callable.call(this, this.options.fallbackLang)
+        return callable.call(this, this.options.fallbackLang, false, true)
       }
     }
 

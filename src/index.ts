@@ -129,7 +129,7 @@ export class I18n {
   private activeMessages: object = reactive({})
 
   // Stores the abort controller for the load promises.
-  private abortController: AbortController;
+  private abortController: AbortController
 
   /**
    * Creates a new instance of the I18n class, applying default options
@@ -137,7 +137,7 @@ export class I18n {
   constructor(options: OptionsInterface = {}) {
     this.options = { ...DEFAULT_OPTIONS, ...options }
 
-    this.load();
+    this.load()
   }
 
   /**
@@ -147,7 +147,7 @@ export class I18n {
     this.options = { ...this.options, ...options }
 
     if (forceLoad) {
-      this.load();
+      this.load()
     }
 
     return this
@@ -181,9 +181,9 @@ export class I18n {
    * Loads the language file.
    */
   loadLanguageAsync(lang: string, dashLangTry = false, ignoreAbort = false): Promise<string | void> {
-    if (! ignoreAbort) {
-      this.abortController?.abort();
-      this.abortController = new AbortController();
+    if (!ignoreAbort) {
+      this.abortController?.abort()
+      this.abortController = new AbortController()
     }
 
     const loadedLang: LanguageInterface = I18n.loaded.find((row) => row.lang === lang)
@@ -194,14 +194,13 @@ export class I18n {
 
     return new Promise((resolve, reject) => {
       this.abortController.signal.addEventListener('abort', () => {
-        resolve();
-      });
+        resolve()
+      })
 
       this.resolveLangAsync(this.options.resolve, lang).then(({ default: messages }) => {
-        resolve(this.applyLanguage(lang, messages, dashLangTry, this.loadLanguageAsync));
-      });
-    });
-
+        resolve(this.applyLanguage(lang, messages, dashLangTry, this.loadLanguageAsync))
+      })
+    })
   }
 
   /**

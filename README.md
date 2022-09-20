@@ -81,7 +81,7 @@ export default defineConfig({
 
         // Laravel < 9, since the lang folder is inside the resources folder
         // you will need to pass as parameter:
-        // i18('resources/lang'),
+        // i18n('resources/lang'),
     ],
 });
 ```

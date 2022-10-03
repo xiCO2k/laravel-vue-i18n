@@ -7,4 +7,5 @@ export interface OptionsInterface {
   lang?: string
   fallbackLang?: string
   resolve?(lang: string): Promise<LanguageJsonFileInterface>
+  onLoad?: (lang: string) => void
 }

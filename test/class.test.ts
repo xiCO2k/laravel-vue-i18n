@@ -68,3 +68,19 @@ it('allows resetting all data', async () => {
     expect(i18n.getActiveLanguage()).toBe('en')
     expect(i18n.trans('Welcome!')).toBe('Welcome!')
 })
+
+it('calls onLoad when loaded', async () => {
+    const onLoadFunction = jest.fn()
+
+    const i18n = new I18n({
+        lang: 'pt',
+        resolve: lang => import(`./fixtures/lang/${lang}.json`),
+        onLoad: onLoadFunction
+    })
+
+    await i18n.loadLanguageAsync('en')
+
+    expect(onLoadFunction).toHaveBeenCalledTimes(2)
+    expect(onLoadFunction).toHaveBeenCalledWith('en')
+    expect(onLoadFunction).toHaveBeenCalledWith('pt')
+})

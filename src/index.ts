@@ -21,7 +21,8 @@ let sharedInstance: I18n = null
 const DEFAULT_OPTIONS: OptionsInterface = {
   lang: !isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : null,
   fallbackLang: 'en',
-  resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} }))
+  resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} })),
+  onLoad: (lang: string) => {}
 }
 
 /**
@@ -305,6 +306,7 @@ export class I18n {
       }
     }
 
+    this.options.onLoad(lang)
     return lang
   }
 

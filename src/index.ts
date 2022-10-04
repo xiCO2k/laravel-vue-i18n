@@ -158,13 +158,7 @@ export class I18n {
    * Loads the language.
    */
   load(): void {
-    const lang = this.getActiveLanguage()
-    if (isServer) {
-      this.loadLanguage(lang)
-      this.options.onLoad(lang)
-    } else {
-      this.loadLanguageAsync(lang).then(this.options.onLoad)
-    }
+    this[isServer ? 'loadLanguage' : 'loadLanguageAsync'](this.getActiveLanguage())
   }
 
   /**
@@ -312,6 +306,7 @@ export class I18n {
       }
     }
 
+    this.options.onLoad(lang)
     return lang
   }
 

@@ -338,13 +338,15 @@ export class I18n {
    */
   wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
     if (!this.activeMessages[key]) {
-      const hasChildItems = this.activeMessages[`${key}.0`] !== undefined;
+      const hasChildItems = this.activeMessages[`${key}.0`] !== undefined
 
       if (hasChildItems) {
-        const childItems = Object.entries(this.activeMessages).filter((item) => item[0].startsWith(`${key}.`)).map(item => item[1]);
-        this.activeMessages[key] = reactive(childItems);
+        const childItems = Object.entries(this.activeMessages)
+          .filter((item) => item[0].startsWith(`${key}.`))
+          .map((item) => item[1])
+        this.activeMessages[key] = reactive(childItems)
       } else {
-        this.activeMessages[key] = key;
+        this.activeMessages[key] = key
       }
     }
 

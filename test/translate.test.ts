@@ -173,3 +173,17 @@ it('resolves translated data with loader if there is only .php files for that la
 
   expect(wrapper.html()).toBe('<h1>Ces identifiants ne correspondent pas à nos enregistrements.</h1>')
 })
+
+
+it('translates arrays with $t mixin', async () => {
+  const wrapper = await global.mountPlugin(`<h1 v-for="line in $t('auth.arr')">{{line}}</h1>`, 'de');
+
+  expect(wrapper.html()).toBe("<h1>foo</h1>\n<h1>bar</h1>")
+})
+
+it('translates arrays with "trans" helper', async () => {
+  await global.mountPlugin(undefined, 'de');
+
+  expect(trans('auth.arr')).toStrictEqual(['foo', 'bar']);
+})
+

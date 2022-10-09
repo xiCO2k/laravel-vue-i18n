@@ -150,7 +150,8 @@ mix.i18n();
 - `lang` *(optional)*: If not provided it will try to find from the `<html lang="pt">` tag.
 - `fallbackLang` *(optional)*: If the `lang` was not provided or is invalid, it will try reach for this `fallbackLang` instead, default is: `en`.
 - `resolve` *(required)*: The way to reach your language files.
-- `shared` *(optional)*: whether to [share the same `I18n` instance](#using-multiple-instances) between different Vue apps. Defaults to `true`.
+- `shared` *(optional)*: Whether to [share the same `I18n` instance](#using-multiple-instances) between different Vue apps, default is: `true`.
+- `onLoad` *(optional)*: It's called everytime a language is loaded.
 
 ```js
 createApp().use(i18nVue, {

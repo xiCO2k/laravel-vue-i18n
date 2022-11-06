@@ -168,7 +168,7 @@ The `trans()` method can translate a given message.
 // lang/pt.json
 {
     "Welcome!": "Bem-vindo!",
-    "Welcome, :name!": "Bem-vindo, :name!",
+    "Welcome, :name!": "Bem-vindo, :name!"
 }
 
 import { trans } from 'laravel-vue-i18n';
@@ -186,7 +186,7 @@ use it instead of `trans()` to watch any changes (language changes or lang files
 // lang/pt.json
 {
     "Welcome!": "Bem-vindo!",
-    "Welcome, :name!": "Bem-vindo, :name!",
+    "Welcome, :name!": "Bem-vindo, :name!"
 }
 
 import { wTrans } from 'laravel-vue-i18n';
@@ -214,7 +214,7 @@ there is also available an `trans_choice` alias, and a mixin called `$tChoice()`
 {
     "There is one apple|There are many apples": "Existe uma maça|Existe muitas maças",
     "{0} There are none|[1,19] There are some|[20,*] There are many": "Não tem|Tem algumas|Tem muitas",
-    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos",
+    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos"
 }
 
 import { transChoice } from 'laravel-vue-i18n';
@@ -236,7 +236,7 @@ use it instead of `transChoice()` to watch any changes (language changes or lang
 {
     "There is one apple|There are many apples": "Existe uma maça|Existe muitas maças",
     "{0} There are none|[1,19] There are some|[20,*] There are many": "Não tem|Tem algumas|Tem muitas",
-    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos",
+    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos"
 }
 
 import { wTransChoice } from 'laravel-vue-i18n';

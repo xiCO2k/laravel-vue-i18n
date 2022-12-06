@@ -1,5 +1,6 @@
 {
     "Welcome!": "Bem-vindo!",
     "Welcome, :name!": "Bem-vindo, :name!",
-    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos"
+    "{1} :count minute ago|[2,*] :count minutes ago": "{1} há :count minuto|[2,*] há :count minutos",
+    "foo.bar": "baz"
 }

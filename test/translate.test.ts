@@ -187,3 +187,7 @@ it('translates arrays with "trans" helper', async () => {
   expect(trans('auth.arr')).toStrictEqual(['foo', 'bar']);
 })
 
+it('translates a possible nested item, and if not exists check on the root level', async () => {
+  await global.mountPlugin(undefined, 'pt');
+  expect(trans('foo.bar')).toBe('baz');
+});

@@ -191,3 +191,10 @@ it('translates a possible nested item, and if not exists check on the root level
   await global.mountPlugin(undefined, 'pt');
   expect(trans('foo.bar')).toBe('baz');
 });
+
+it('translates a nested file item while using "/" and "." at the same time as a delimiter', async () => {
+  await global.mountPlugin()
+
+  expect(trans('nested/cars/car.is_electric')).toBe('É elétrico?');
+  expect(trans('nested/cars/car.foo.level1.level2')).toBe('barpt');
+})

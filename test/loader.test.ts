@@ -30,6 +30,14 @@ it('includes .php lang file in subdirectory in .json', () => {
     expect(langEn['domain.car.foo.level1.level2']).toBe('barpt');
 });
 
+it('includes .php lang file in nested subdirectory in .json', () => {
+    const files = parseAll(__dirname + '/fixtures/lang/');
+    const langEn = JSON.parse(fs.readFileSync(files[0].path).toString())
+
+    expect(langEn['nested.cars.car.is_electric']).toBe('Electric');
+    expect(langEn['nested.cars.car.foo.level1.level2']).toBe('barpt');
+})
+
 it('transforms .php lang to .json', () => {
     const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());
 

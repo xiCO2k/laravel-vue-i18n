@@ -35,32 +35,9 @@ export const parseAll = (folderPath: string): { name: string; path: string }[] =
 
   const data = []
   for (const folder of folders) {
-    const lang = {}
+    const langFolderPath = folderPath + path.sep + folder
 
-    fs.readdirSync(folderPath + path.sep + folder)
-      .sort()
-      .forEach((langFolderItem) => {
-        const langFolderPath = folderPath + path.sep + folder
-        const langFolderItemPath = langFolderPath + path.sep + langFolderItem
-
-        if (fs.statSync(langFolderItemPath).isDirectory()) {
-          // Lang sub folder
-          const subFolderFileKey = langFolderItem.replace(/\.\w+$/, '')
-          lang[subFolderFileKey] = {}
-
-          fs.readdirSync(langFolderItemPath)
-            .filter((file) => !fs.statSync(langFolderItemPath + path.sep + file).isDirectory())
-            .sort()
-            .forEach((file) => {
-              lang[subFolderFileKey][file.replace(/\.\w+$/, '')] = parse(
-                fs.readFileSync(langFolderItemPath + path.sep + file).toString()
-              )
-            })
-        } else {
-          // Lang file
-          lang[langFolderItem.replace(/\.\w+$/, '')] = parse(fs.readFileSync(langFolderItemPath).toString())
-        }
-      })
+    const lang = readThroughDir(langFolderPath)
 
     data.push({
       folder,
@@ -146,4 +123,23 @@ export const reset = (folderPath) => {
     .forEach((file) => {
       fs.unlinkSync(folderPath + file)
     })
+}
+
+export const readThroughDir = (dir) => {
+  const data = {}
+
+  fs.readdirSync(dir)
+    .forEach((file) => {
+      const absoluteFile = dir + path.sep + file
+
+      if (fs.statSync(absoluteFile).isDirectory()) {
+        const subFolderFileKey = file.replace(/\.\w+$/, '')
+
+        data[subFolderFileKey] = readThroughDir(absoluteFile)
+      } else {
+        data[file.replace(/\.\w+$/, '')] = parse(fs.readFileSync(absoluteFile).toString())
+      }
+    })
+
+  return data
 }

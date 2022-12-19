@@ -337,7 +337,9 @@ export class I18n {
    * Get the translation for the given key and watch for any changes.
    */
   wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
-    key = key.replace(/\//g, '.')
+    if (!this.activeMessages[key] && !this.activeMessages[`${key}.0`]) {
+      key = key.replace(/\//g, '.')
+    }
 
     if (!this.activeMessages[key]) {
       const hasChildItems = this.activeMessages[`${key}.0`] !== undefined

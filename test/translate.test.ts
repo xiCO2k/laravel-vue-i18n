@@ -198,3 +198,10 @@ it('translates a nested file item while using "/" and "." at the same time as a 
   expect(trans('nested/cars/car.is_electric')).toBe('É elétrico?');
   expect(trans('nested/cars/car.foo.level1.level2')).toBe('barpt');
 })
+
+it('does not translate existing strings which contain delimiter symbols', async () => {
+  await global.mountPlugin()
+
+  expect(trans('Start/end')).toBe('Início/Fim');
+  expect(trans('Get started.')).toBe('Comece.');
+})

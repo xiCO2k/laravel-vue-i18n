@@ -129,6 +129,9 @@ export class I18n {
   // Stores messages for the currently active language
   private activeMessages: object = reactive({})
 
+  // Stores messages for fallback language
+  private fallbackMessages: object = reactive({})
+
   // Stores the abort controller for the load promises.
   private abortController: AbortController
 
@@ -137,8 +140,20 @@ export class I18n {
    */
   constructor(options: OptionsInterface = {}) {
     this.options = { ...DEFAULT_OPTIONS, ...options }
-
-    this.load()
+    if (this.options.fallbackLang && !isServer) {
+      this.resolveLangAsync(this.options.resolve, this.options.fallbackLang).then(({ default: messages }) => {
+        for (const [key, value] of Object.entries(messages)) {
+          this.fallbackMessages[key] = value
+        }
+        const lang = this.options.fallbackLang
+        const data: LanguageInterface = { lang, messages }
+        I18n.loaded.push(data)
+        this.load()
+      })
+      
+    } else {
+      this.load()
+    }
   }
 
   /**
@@ -300,8 +315,14 @@ export class I18n {
       this.activeMessages[key] = value
     }
 
+    for (const [key, value] of Object.entries(this.fallbackMessages)) {
+      if (!this.activeMessages[key] || this.activeMessages[key] === key) {
+        this.activeMessages[key] = value
+      }
+    }
+
     for (const [key] of Object.entries(this.activeMessages)) {
-      if (!messages[key]) {
+      if (!messages[key] && !this.fallbackMessages[key]) {
         this.activeMessages[key] = null
       }
     }

@@ -385,9 +385,9 @@ export class I18n {
       value = value.toString()
 
       message = message
-        .replace(`:${key}`, value)
-        .replace(`:${key.toUpperCase()}`, value.toUpperCase())
-        .replace(`:${capitalize(key)}`, capitalize(value))
+        .replace(new RegExp(`:${key}`, 'g'), value)
+        .replace(new RegExp(`:${key.toUpperCase()}`, 'g'), value.toUpperCase())
+        .replace(new RegExp(`:${capitalize(key)}`, 'g'), capitalize(value))
     })
 
     return message

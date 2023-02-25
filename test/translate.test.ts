@@ -61,11 +61,24 @@ it('translates key with values with $t mixin', async () => {
   expect(wrapper.html()).toBe('<h1>Bem-vindo, Francisco!</h1>')
 })
 
+it('replaces multiple occurrences with $t mixin', async () => {
+  const wrapper = await global.mountPlugin(`<h1>{{ $t('hi :name, hi :name', { name: 'Francisco' }) }}</h1>`);
+
+    expect(wrapper.html()).toBe('<h1>olá Francisco, olá Francisco</h1>')
+})
+
 it('translates key with values with "trans" helper', async () => {
   await global.mountPlugin();
 
   expect(trans('Welcome, :name!', { name: 'Francisco' }))
     .toBe('Bem-vindo, Francisco!')
+})
+
+it('replaces multiple occurrences with "trans" helper', async () => {
+  await global.mountPlugin();
+
+  expect(trans('hi :name, hi :name', { name: 'Francisco' }))
+    .toBe('olá Francisco, olá Francisco')
 })
 
 it('loads a lang', async () => {

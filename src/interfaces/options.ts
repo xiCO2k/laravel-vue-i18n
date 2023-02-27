@@ -6,6 +6,7 @@ import { LanguageJsonFileInterface } from './language-json-file'
 export interface OptionsInterface {
   lang?: string
   fallbackLang?: string
+  fallbackMissingTranslations?: boolean
   resolve?(lang: string): Promise<LanguageJsonFileInterface>
   onLoad?: (lang: string) => void
 }

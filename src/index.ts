@@ -21,6 +21,7 @@ let sharedInstance: I18n = null
 const DEFAULT_OPTIONS: OptionsInterface = {
   lang: !isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : null,
   fallbackLang: 'en',
+  fallbackMissingTranslations: false,
   resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} })),
   onLoad: (lang: string) => {}
 }
@@ -140,17 +141,8 @@ export class I18n {
    */
   constructor(options: OptionsInterface = {}) {
     this.options = { ...DEFAULT_OPTIONS, ...options }
-    if (this.options.fallbackLang && !isServer) {
-      this.resolveLangAsync(this.options.resolve, this.options.fallbackLang).then(({ default: messages }) => {
-        for (const [key, value] of Object.entries(messages)) {
-          this.fallbackMessages[key] = value
-        }
-        const lang = this.options.fallbackLang
-        const data: LanguageInterface = { lang, messages }
-        I18n.loaded.push(data)
-        this.load()
-      })
-      
+    if (this.options.fallbackMissingTranslations) {
+      this.loadFallbackLanguage()
     } else {
       this.load()
     }
@@ -174,6 +166,32 @@ export class I18n {
    */
   load(): void {
     this[isServer ? 'loadLanguage' : 'loadLanguageAsync'](this.getActiveLanguage())
+  }
+
+  /**
+   * Load fallback language
+   */
+  loadFallbackLanguage(): void {
+    if (!isServer) {
+      this.resolveLangAsync(this.options.resolve, this.options.fallbackLang).then(({ default: messages }) => {
+        for (const [key, value] of Object.entries(messages)) {
+          this.fallbackMessages[key] = value
+        }
+        const lang = this.options.fallbackLang
+        const data: LanguageInterface = { lang, messages }
+        I18n.loaded.push(data)
+        this.load()
+      })
+    } else {
+      const { default: messages } = this.resolveLang(this.options.resolve, this.options.fallbackLang)
+      for (const [key, value] of Object.entries(messages)) {
+        this.fallbackMessages[key] = value
+      }
+      const lang = this.options.fallbackLang
+      const data: LanguageInterface = { lang, messages }
+      I18n.loaded.push(data)
+      this.loadLanguage(this.getActiveLanguage())
+    }
   }
 
   /**

@@ -84,3 +84,21 @@ it('calls onLoad when loaded', async () => {
     expect(onLoadFunction).toHaveBeenCalledWith('en')
     expect(onLoadFunction).toHaveBeenCalledWith('pt')
 })
+
+it('can override missing translations with fallback language translations', async () => {
+    const onLoadFunction = jest.fn()
+    const i18n = new I18n({
+        fallbackLang: 'en',
+        fallbackMissingTranslations: true,
+        resolve: lang => import(`./fixtures/lang/${lang}.json`),
+        onLoad: onLoadFunction
+    })
+    await i18n.loadLanguageAsync('pt')
+
+    expect(onLoadFunction).toHaveBeenCalledTimes(1)
+
+    expect(i18n.getActiveLanguage()).toBe('pt')
+    expect(i18n.trans('Welcome!')).toBe('Bem-vindo!')
+
+    expect(i18n.trans('English only.')).toBe('English only.')
+})

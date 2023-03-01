@@ -148,6 +148,7 @@ mix.i18n();
 ### Plugin Options
 
 - `lang` *(optional)*: If not provided it will try to find from the `<html lang="pt">` tag.
+- `defaultKeyPrefix` (optional): If provided will replace the key out of the message, example: trans("page.Message for people looking at this page") will return only Message for people looking at this page to the view instead of the entire key
 - `fallbackLang` *(optional)*: If the `lang` was not provided or is invalid, it will try reach for this `fallbackLang` instead, default is: `en`.
 - `resolve` *(required)*: The way to reach your language files.
 - `shared` *(optional)*: Whether to [share the same `I18n` instance](#using-multiple-instances) between different Vue apps, default is: `true`.

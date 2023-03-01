@@ -350,7 +350,11 @@ export class I18n {
           .map((item) => item[1])
         this.activeMessages[key] = reactive(childItems)
       } else {
-        this.activeMessages[key] = key
+        if(key.startsWith(this.options.defaultKeyPrefix)){
+          this.activeMessages[key] = key.replace(this.options.defaultKeyPrefix, '')
+        }else{
+          this.activeMessages[key] = key
+        }
       }
     }
 

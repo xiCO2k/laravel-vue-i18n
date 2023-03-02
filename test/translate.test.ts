@@ -47,6 +47,13 @@ it('fallback to the `fallbackLang` if the `lang` was not found', async () => {
   expect(trans('Welcome!')).toBe('Bem-vindo!');
 });
 
+it('fallback individual translation entries to the `fallbackLang` if translation was not found in the active language', async () => {
+  await global.mountPlugin(`<div />`, 'pt', 'en', 'true');
+
+  expect(trans('Welcome!')).toBe('Bem-vindo!');
+  expect(trans('English only.')).toBe('English only.');
+});
+
 it('returns the given key if the key is not available on the lang', async () => {
   await global.mountPlugin(`<div />`, 'en');
   expect(trans('Only Available on EN')).toBe('Only Available on EN');

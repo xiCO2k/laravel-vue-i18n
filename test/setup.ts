@@ -2,12 +2,13 @@ import { mount } from '@vue/test-utils'
 import { i18nVue } from '../src'
 import { parseAll } from '../src/loader'
 
-global.mountPlugin = async (template = '<div />', lang = 'pt', fallbackLang = 'pt') => {
+global.mountPlugin = async (template = '<div />', lang = 'pt', fallbackLang = 'pt', fallbackMissingTranslations = false) => {
   const wrapper = mount({ template }, {
     global: {
       plugins: [[i18nVue, {
         lang,
         fallbackLang,
+        fallbackMissingTranslations,
         resolve: lang => import(`./fixtures/lang/${lang}.json`),
       }]]
     }

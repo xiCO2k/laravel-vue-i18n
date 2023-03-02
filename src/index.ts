@@ -174,24 +174,18 @@ export class I18n {
   loadFallbackLanguage(): void {
     if (!isServer) {
       this.resolveLangAsync(this.options.resolve, this.options.fallbackLang).then(({ default: messages }) => {
-        for (const [key, value] of Object.entries(messages)) {
-          this.fallbackMessages[key] = value
-        }
-        const lang = this.options.fallbackLang
-        const data: LanguageInterface = { lang, messages }
-        I18n.loaded.push(data)
+        this.applyFallbackLanguage(this.options.fallbackLang, messages)
+
         this.load()
       })
-    } else {
-      const { default: messages } = this.resolveLang(this.options.resolve, this.options.fallbackLang)
-      for (const [key, value] of Object.entries(messages)) {
-        this.fallbackMessages[key] = value
-      }
-      const lang = this.options.fallbackLang
-      const data: LanguageInterface = { lang, messages }
-      I18n.loaded.push(data)
-      this.loadLanguage(this.getActiveLanguage())
+
+      return
     }
+
+    const { default: messages } = this.resolveLang(this.options.resolve, this.options.fallbackLang)
+
+    this.applyFallbackLanguage(this.options.fallbackLang, messages)
+    this.loadLanguage(this.getActiveLanguage())
   }
 
   /**
@@ -316,6 +310,17 @@ export class I18n {
     I18n.loaded.push(data)
 
     return this.setLanguage(data)
+  }
+
+  applyFallbackLanguage(lang: string, messages: { [key: string]: string }): void {
+    for (const [key, value] of Object.entries(messages)) {
+      this.fallbackMessages[key] = value
+    }
+
+    I18n.loaded.push({
+      lang: this.options.fallbackLang,
+      messages
+    })
   }
 
   /**

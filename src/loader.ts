@@ -128,18 +128,17 @@ export const reset = (folderPath) => {
 export const readThroughDir = (dir) => {
   const data = {}
 
-  fs.readdirSync(dir)
-    .forEach((file) => {
-      const absoluteFile = dir + path.sep + file
+  fs.readdirSync(dir).forEach((file) => {
+    const absoluteFile = dir + path.sep + file
 
-      if (fs.statSync(absoluteFile).isDirectory()) {
-        const subFolderFileKey = file.replace(/\.\w+$/, '')
+    if (fs.statSync(absoluteFile).isDirectory()) {
+      const subFolderFileKey = file.replace(/\.\w+$/, '')
 
-        data[subFolderFileKey] = readThroughDir(absoluteFile)
-      } else {
-        data[file.replace(/\.\w+$/, '')] = parse(fs.readFileSync(absoluteFile).toString())
-      }
-    })
+      data[subFolderFileKey] = readThroughDir(absoluteFile)
+    } else {
+      data[file.replace(/\.\w+$/, '')] = parse(fs.readFileSync(absoluteFile).toString())
+    }
+  })
 
   return data
 }

@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { Engine } from 'php-parser'
+import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 
 export const hasPhpTranslations = (folderPath: string): boolean => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
@@ -25,8 +26,12 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
   return false
 }
 
-export const parseAll = (folderPath: string): { name: string; path: string }[] => {
+export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
+
+  if (!fs.existsSync(folderPath)) {
+    return []
+  }
 
   const folders = fs
     .readdirSync(folderPath)
@@ -50,11 +55,10 @@ export const parseAll = (folderPath: string): { name: string; path: string }[] =
       return Object.keys(translations).length > 0
     })
     .map(({ folder, translations }) => {
-      const name = `php_${folder}.json`
-      const path = folderPath + name
-
-      fs.writeFileSync(path, JSON.stringify(translations))
-      return { name, path }
+      return {
+        name: `php_${folder}.json`,
+        translations
+      }
     })
 }
 
@@ -141,4 +145,37 @@ export const readThroughDir = (dir) => {
   })
 
   return data
+}
+
+export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
+  data = mergeData(data)
+
+  if (!fs.existsSync(langPath)) {
+    fs.mkdirSync(langPath)
+  }
+
+  data.forEach(({ name, translations }) => {
+    fs.writeFileSync(langPath + name, JSON.stringify(translations))
+  })
+
+  return data
+}
+
+function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
+  const obj = {}
+
+  data.forEach(({ name, translations }) => {
+    if (!obj[name]) {
+      obj[name] = {}
+    }
+
+    obj[name] = { ...obj[name], ...translations }
+  })
+
+  const arr = []
+  Object.entries(obj).forEach(([name, translations]) => {
+    arr.push({ name, translations })
+  })
+
+  return arr
 }

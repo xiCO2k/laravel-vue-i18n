@@ -1,25 +1,34 @@
-import { existsSync, unlinkSync } from 'fs'
-import { parseAll, hasPhpTranslations } from './loader'
+import path from 'path'
+import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
+import { parseAll, hasPhpTranslations, generateFiles } from './loader'
+import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 
 export default function i18n(langPath: string = 'lang') {
-  let files: { name: string; path: string }[] = []
+  langPath = langPath.replace(/[\\/]$/, '') + path.sep
+
+  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)
+  let files: ParsedLangFileInterface[] = []
   let exitHandlersBound: boolean = false
 
   const clean = () => {
-    files.forEach((file) => unlinkSync(file.path))
+    files.forEach((file) => unlinkSync(langPath + file.name))
 
     files = []
+
+    if (existsSync(langPath) && readdirSync(langPath).length < 1) {
+      rmdirSync(langPath)
+    }
   }
 
   return {
     name: 'i18n',
     enforce: 'post',
     config(config) {
-      if (!hasPhpTranslations(langPath)) {
+      if (!hasPhpTranslations(frameworkLangPath) && !hasPhpTranslations(langPath)) {
         return
       }
 
-      files = parseAll(langPath)
+      files = generateFiles(langPath, [...parseAll(frameworkLangPath), ...parseAll(langPath)])
 
       /** @ts-ignore */
       process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
@@ -33,7 +42,7 @@ export default function i18n(langPath: string = 'lang') {
     buildEnd: clean,
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        files = parseAll(langPath)
+        files = generateFiles(langPath, [...parseAll(frameworkLangPath), ...parseAll(langPath)])
       }
     },
     configureServer(server) {

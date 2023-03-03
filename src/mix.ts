@@ -5,7 +5,7 @@ import mix from 'laravel-mix'
 import { Component } from 'laravel-mix/src/components/Component'
 import { EnvironmentPlugin, Configuration } from 'webpack'
 
-import { parseAll, hasPhpTranslations } from './loader'
+import { generateFiles, parseAll, hasPhpTranslations } from './loader'
 
 class BeforeBuildPlugin {
   callback: Function
@@ -23,10 +23,15 @@ mix.extend(
   'i18n',
   class extends Component {
     langPath: string
+    frameworkLangPath: string
     context: any
 
     register(langPath: string = 'lang'): void {
       this.langPath = this.context.paths.rootPath + path.sep + langPath
+      this.frameworkLangPath =
+        this.context.paths.rootPath +
+        path.sep +
+        'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)
     }
 
     webpackConfig(config: Configuration): void {
@@ -46,16 +51,20 @@ mix.extend(
 
       config.plugins.push(
         new BeforeBuildPlugin(() => {
-          files = parseAll(this.langPath)
+          files = generateFiles(this.langPath, [...parseAll(this.frameworkLangPath), ...parseAll(this.langPath)])
         })
       )
 
       this.context.listen('build', () => {
         files.forEach((file) => {
-          if (fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path)
+          if (fs.existsSync(this.langPath + file.name)) {
+            fs.unlinkSync(this.langPath + file.name)
           }
         })
+
+        if (fs.existsSync(this.langPath) && fs.readdirSync(this.langPath).length < 1) {
+          fs.rmdirSync(this.langPath)
+        }
       })
     }
   }

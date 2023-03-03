@@ -1,29 +1,31 @@
 import fs from 'fs';
-import { parseAll, parse, hasPhpTranslations, reset } from '../src/loader';
+import { generateFiles, parseAll, parse, hasPhpTranslations, reset } from '../src/loader';
 
 beforeEach(() => reset(__dirname + '/fixtures/lang/'));
 
 it('creates a file for each lang', () => {
-    const files = parseAll(__dirname + '/fixtures/lang/');
+    const langPath = __dirname + '/fixtures/lang/';
+    const files = generateFiles(langPath, parseAll(langPath));
 
     expect(files.length).toBe(3);
     expect(files[0].name).toBe('php_en.json');
     expect(files[1].name).toBe('php_fr.json');
     expect(files[2].name).toBe('php_pt.json');
 
-    const langEn = JSON.parse(fs.readFileSync(files[0].path).toString());
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
     expect(langEn['auth.failed']).toBe('These credentials do not match our records.');
     expect(langEn['auth.foo.level1.level2']).toBe('baren');
     expect(langEn['auth.multiline']).toBe('Lorem ipsum dolor sit amet.');
 
-    const langPt = JSON.parse(fs.readFileSync(files[2].path).toString());
+    const langPt = JSON.parse(fs.readFileSync(langPath + files[2].name).toString());
     expect(langPt['auth.failed']).toBe('As credenciais indicadas não coincidem com as registadas no sistema.');
     expect(langPt['auth.foo.level1.level2']).toBe('barpt');
 });
 
 it('includes .php lang file in subdirectory in .json', () => {
-    const files = parseAll(__dirname + '/fixtures/lang/');
-    const langEn = JSON.parse(fs.readFileSync(files[0].path).toString());
+    const langPath = __dirname + '/fixtures/lang/';
+    const files = generateFiles(langPath, parseAll(langPath));
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
 
     expect(langEn['domain.user.sub_dir_support_is_amazing']).toBe('Subdirectory support is amazing');
     expect(langEn['domain.car.is_electric']).toBe('Electric');
@@ -31,8 +33,9 @@ it('includes .php lang file in subdirectory in .json', () => {
 });
 
 it('includes .php lang file in nested subdirectory in .json', () => {
-    const files = parseAll(__dirname + '/fixtures/lang/');
-    const langEn = JSON.parse(fs.readFileSync(files[0].path).toString())
+    const langPath = __dirname + '/fixtures/lang/';
+    const files = generateFiles(langPath, parseAll(langPath));
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString())
 
     expect(langEn['nested.cars.car.is_electric']).toBe('Electric');
     expect(langEn['nested.cars.car.foo.level1.level2']).toBe('barpt');

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { i18nVue } from '../src'
-import { parseAll } from '../src/loader'
+import { generateFiles, parseAll } from '../src/loader'
 
 global.mountPlugin = async (template = '<div />', lang = 'pt', fallbackLang = 'pt', fallbackMissingTranslations = false) => {
   const wrapper = mount({ template }, {
@@ -36,7 +36,8 @@ global.mountPluginWithRequire = async (template = '<div />', lang = 'pt', fallba
 }
 
 global.mixLoader = () => {
-  parseAll(__dirname + '/fixtures/lang/');
+  const langPath = __dirname + '/fixtures/lang/';
+  generateFiles(langPath, parseAll(langPath));
 
   process.env = Object.assign(process.env, {
     LARAVEL_VUE_I18N_HAS_PHP: 'true',

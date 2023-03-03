@@ -146,3 +146,28 @@ export const readThroughDir = (dir) => {
 
   return data
 }
+
+export const generateFiles = (langPath, files: ParsedLangFileInterface[]) => {
+  mergeData(files).forEach(({ name, translations }) => {
+    fs.writeFileSync(langPath + name, JSON.stringify(translations))
+  })
+}
+
+function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
+  const obj = {};
+
+  data.forEach(({ name, translations }) => {
+    if (! obj[name]) {
+      obj[name] = {};
+    }
+
+    obj[name] = {...obj[name], ...translations}
+  });
+
+  const arr = [];
+  Object.entries(obj).forEach(([name, translations]) => {
+    arr.push({ name, translations });
+  });
+
+  return arr;
+}

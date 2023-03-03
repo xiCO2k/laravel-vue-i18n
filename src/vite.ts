@@ -1,31 +1,12 @@
 import path from 'path'
 import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
-import { parseAll, hasPhpTranslations } from './loader'
+import { parseAll, hasPhpTranslations, generateFiles } from './loader'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
 
-function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
-  const obj = {};
-
-  data.forEach(({ name, translations }) => {
-    if (! obj[name]) {
-      obj[name] = {};
-    }
-
-    obj[name] = {...obj[name], ...translations}
-  });
-
-  const arr = [];
-  Object.entries(obj).forEach(([name, translations]) => {
-    arr.push({ name, translations });
-  });
-
-  return arr;
-}
-
 export default function i18n(langPath: string = 'lang') {
-  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep);
   langPath = langPath.replace(/[\\/]$/, '') + path.sep;
 
+  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep);
   let files: ParsedLangFileInterface[] = []
   let exitHandlersBound: boolean = false
 
@@ -48,14 +29,10 @@ export default function i18n(langPath: string = 'lang') {
         return
       }
 
-      files = mergeData([
+      files = generateFiles(langPath, [
         ...parseAll(frameworkLangPath),
         ...parseAll(langPath),
       ]);
-
-      files.forEach(({ name, translations }) => {
-        writeFileSync(langPath + name, JSON.stringify(translations))
-      })
 
       /** @ts-ignore */
       process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true

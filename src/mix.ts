@@ -61,6 +61,10 @@ mix.extend(
             fs.unlinkSync(this.langPath + file.name)
           }
         })
+
+        if (fs.existsSync(this.langPath) && fs.readdirSync(this.langPath).length < 1) {
+          fs.rmdirSync(this.langPath)
+        }
       })
     }
   }

@@ -150,6 +150,10 @@ export const readThroughDir = (dir) => {
 export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
   data = mergeData(data)
 
+  if (! fs.existsSync(langPath)) {
+    fs.mkdirSync(langPath);
+  }
+
   data.forEach(({ name, translations }) => {
     fs.writeFileSync(langPath + name, JSON.stringify(translations))
   })

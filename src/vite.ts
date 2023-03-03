@@ -2,6 +2,8 @@ import { existsSync, unlinkSync } from 'fs'
 import { parseAll, hasPhpTranslations } from './loader'
 
 export default function i18n(langPath: string = 'lang') {
+  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang';
+
   let files: { name: string; path: string }[] = []
   let exitHandlersBound: boolean = false
 
@@ -15,11 +17,12 @@ export default function i18n(langPath: string = 'lang') {
     name: 'i18n',
     enforce: 'post',
     config(config) {
-      if (!hasPhpTranslations(langPath)) {
+      if (! hasPhpTranslations(frameworkLangPath)
+       && ! hasPhpTranslations(langPath)) {
         return
       }
 
-      files = parseAll(langPath)
+      files = [...parseAll(langPath), ...parseAll(frameworkLangPath)];
 
       /** @ts-ignore */
       process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
@@ -33,7 +36,7 @@ export default function i18n(langPath: string = 'lang') {
     buildEnd: clean,
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        files = parseAll(langPath)
+        files = [...parseAll(langPath), ...parseAll(frameworkLangPath)];
       }
     },
     configureServer(server) {

@@ -22,7 +22,7 @@ export default function i18n(langPath: string = 'lang') {
         return
       }
 
-      files = [...parseAll(langPath), ...parseAll(frameworkLangPath)];
+      files = [...parseAll(langPath), ...parseAll(frameworkLangPath, langPath)];
 
       /** @ts-ignore */
       process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
@@ -36,7 +36,7 @@ export default function i18n(langPath: string = 'lang') {
     buildEnd: clean,
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        files = [...parseAll(langPath), ...parseAll(frameworkLangPath)];
+        files = [...parseAll(langPath), ...parseAll(frameworkLangPath, langPath)];
       }
     },
     configureServer(server) {

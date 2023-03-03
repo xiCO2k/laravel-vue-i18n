@@ -25,8 +25,9 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
   return false
 }
 
-export const parseAll = (folderPath: string): { name: string; path: string }[] => {
+export const parseAll = (folderPath: string, outputPath: string|null = null): { name: string; path: string }[] => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
+  outputPath = outputPath ? outputPath.replace(/[\\/]$/, '') + path.sep : null;
 
   if (! fs.existsSync(folderPath)) {
     return [];
@@ -55,7 +56,7 @@ export const parseAll = (folderPath: string): { name: string; path: string }[] =
     })
     .map(({ folder, translations }) => {
       const name = `php_${folder}.json`
-      const path = folderPath + name
+      const path = (outputPath || folderPath) + name
 
       fs.writeFileSync(path, JSON.stringify(translations))
       return { name, path }

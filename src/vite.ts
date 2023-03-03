@@ -6,7 +6,7 @@ import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
 function mergeData(...data: ParsedLangFileInterface[]) {
   const obj = {};
 
-  data.forEach(({ name, translation }) => {
+  data.forEach(({ name, translations }) => {
     if (! obj[name]) {
       obj[name] = {};
     }

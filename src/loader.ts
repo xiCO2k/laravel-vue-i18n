@@ -33,6 +33,10 @@ export const parseAll = (folderPath: string, outputPath: string|null = null): { 
     return [];
   }
 
+  if (outputPath && ! fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath);
+  }
+
   const folders = fs
     .readdirSync(folderPath)
     .filter((file) => fs.statSync(folderPath + path.sep + file).isDirectory())

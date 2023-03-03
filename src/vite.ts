@@ -15,7 +15,7 @@ export default function i18n(langPath: string = 'lang') {
 
     files = []
 
-    if (readdirSync(langPath).length < 1) {
+    if (existsSync(langPath) && readdirSync(langPath).length < 1) {
       rmdirSync(langPath)
     }
   }

@@ -1,8 +1,29 @@
-import { existsSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
+import path from 'path'
+import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
 import { parseAll, hasPhpTranslations } from './loader'
 
+function mergeData(...data: { name: string, translations: { [key: string]: string } }) {
+  const obj = {};
+
+  data.forEach(({ name, translation }) => {
+    if (! obj[name]) {
+      obj[name] = {};
+    }
+
+    obj[name] = {...obj[name], ...translations}
+  });
+
+  const arr = [];
+  Object.entries(obj).forEach(([name, translations]) => {
+    arr.push({name, translations});
+  });
+
+  return arr;
+}
+
 export default function i18n(langPath: string = 'lang') {
-  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang';
+  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep);
+  langPath = langPath.replace(/[\\/]$/, '') + path.sep;
 
   let files: { name: string; path: string }[] = []
   let exitHandlersBound: boolean = false
@@ -26,7 +47,11 @@ export default function i18n(langPath: string = 'lang') {
         return
       }
 
-      files = [...parseAll(langPath), ...parseAll(frameworkLangPath, langPath)];
+      files = mergeData(parseAll(frameworkLangPath), parseAll(langPath));
+
+      files.forEach(({ name, translations }) => {
+        writeFileSync(langPath + name, JSON.stringify(translations))
+      })
 
       /** @ts-ignore */
       process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
@@ -40,7 +65,7 @@ export default function i18n(langPath: string = 'lang') {
     buildEnd: clean,
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        files = [...parseAll(langPath), ...parseAll(frameworkLangPath, langPath)];
+        files = [...parseAll(frameworkLangPath, langPath), ...parseAll(langPath)];
       }
     },
     configureServer(server) {

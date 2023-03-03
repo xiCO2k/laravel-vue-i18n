@@ -1,4 +1,4 @@
-import { existsSync, unlinkSync } from 'fs'
+import { existsSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
 import { parseAll, hasPhpTranslations } from './loader'
 
 export default function i18n(langPath: string = 'lang') {
@@ -11,6 +11,10 @@ export default function i18n(langPath: string = 'lang') {
     files.forEach((file) => unlinkSync(file.path))
 
     files = []
+
+    if (readdirSync(langPath).length < 1) {
+      rmdirSync(langPath);
+    }
   }
 
   return {

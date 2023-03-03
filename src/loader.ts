@@ -132,10 +132,6 @@ export const reset = (folderPath) => {
     .forEach((file) => {
       fs.unlinkSync(folderPath + file)
     })
-
-  if (fs.readdirSync(folderPath).length < 1) {
-    fs.rmdirSync(folderPath);
-  }
 }
 
 export const readThroughDir = (dir) => {

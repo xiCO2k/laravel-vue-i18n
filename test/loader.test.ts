@@ -1,11 +1,11 @@
 import fs from 'fs';
-import { parseAll, parse, hasPhpTranslations, reset } from '../src/loader';
+import { generateFiles, parseAll, parse, hasPhpTranslations, reset } from '../src/loader';
 
 beforeEach(() => reset(__dirname + '/fixtures/lang/'));
 
 it('creates a file for each lang', () => {
     const langPath = __dirname + '/fixtures/lang/';
-    const files = parseAll(langPath);
+    const files = generateFiles(langPath, parseAll(langPath));
 
     expect(files.length).toBe(3);
     expect(files[0].name).toBe('php_en.json');
@@ -24,7 +24,7 @@ it('creates a file for each lang', () => {
 
 it('includes .php lang file in subdirectory in .json', () => {
     const langPath = __dirname + '/fixtures/lang/';
-    const files = parseAll(langPath);
+    const files = generateFiles(langPath, parseAll(langPath));
     const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
 
     expect(langEn['domain.user.sub_dir_support_is_amazing']).toBe('Subdirectory support is amazing');
@@ -34,8 +34,8 @@ it('includes .php lang file in subdirectory in .json', () => {
 
 it('includes .php lang file in nested subdirectory in .json', () => {
     const langPath = __dirname + '/fixtures/lang/';
-    const files = parseAll(langPath);
-    const langEn = JSON.parse(fs.readFileSync(files[0].name).toString())
+    const files = generateFiles(langPath, parseAll(langPath));
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString())
 
     expect(langEn['nested.cars.car.is_electric']).toBe('Electric');
     expect(langEn['nested.cars.car.foo.level1.level2']).toBe('barpt');

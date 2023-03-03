@@ -1,12 +1,12 @@
 import path from 'path'
 import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
 import { parseAll, hasPhpTranslations, generateFiles } from './loader'
-import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
+import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 
 export default function i18n(langPath: string = 'lang') {
-  langPath = langPath.replace(/[\\/]$/, '') + path.sep;
+  langPath = langPath.replace(/[\\/]$/, '') + path.sep
 
-  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep);
+  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)
   let files: ParsedLangFileInterface[] = []
   let exitHandlersBound: boolean = false
 
@@ -16,7 +16,7 @@ export default function i18n(langPath: string = 'lang') {
     files = []
 
     if (readdirSync(langPath).length < 1) {
-      rmdirSync(langPath);
+      rmdirSync(langPath)
     }
   }
 
@@ -24,15 +24,11 @@ export default function i18n(langPath: string = 'lang') {
     name: 'i18n',
     enforce: 'post',
     config(config) {
-      if (! hasPhpTranslations(frameworkLangPath)
-       && ! hasPhpTranslations(langPath)) {
+      if (!hasPhpTranslations(frameworkLangPath) && !hasPhpTranslations(langPath)) {
         return
       }
 
-      files = generateFiles(langPath, [
-        ...parseAll(frameworkLangPath),
-        ...parseAll(langPath),
-      ]);
+      files = generateFiles(langPath, [...parseAll(frameworkLangPath), ...parseAll(langPath)])
 
       /** @ts-ignore */
       process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
@@ -46,7 +42,7 @@ export default function i18n(langPath: string = 'lang') {
     buildEnd: clean,
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        files = [...parseAll(frameworkLangPath), ...parseAll(langPath)];
+        files = generateFiles(langPath, [...parseAll(frameworkLangPath), ...parseAll(langPath)])
       }
     },
     configureServer(server) {

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { Engine } from 'php-parser'
-import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
+import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 
 export const hasPhpTranslations = (folderPath: string): boolean => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
@@ -29,8 +29,8 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
 export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
 
-  if (! fs.existsSync(folderPath)) {
-    return [];
+  if (!fs.existsSync(folderPath)) {
+    return []
   }
 
   const folders = fs
@@ -57,7 +57,7 @@ export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
     .map(({ folder, translations }) => {
       return {
         name: `php_${folder}.json`,
-        translations,
+        translations
       }
     })
 }
@@ -154,24 +154,24 @@ export const generateFiles = (langPath: string, data: ParsedLangFileInterface[])
     fs.writeFileSync(langPath + name, JSON.stringify(translations))
   })
 
-  return data;
+  return data
 }
 
 function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
-  const obj = {};
+  const obj = {}
 
   data.forEach(({ name, translations }) => {
-    if (! obj[name]) {
-      obj[name] = {};
+    if (!obj[name]) {
+      obj[name] = {}
     }
 
-    obj[name] = {...obj[name], ...translations}
-  });
+    obj[name] = { ...obj[name], ...translations }
+  })
 
-  const arr = [];
+  const arr = []
   Object.entries(obj).forEach(([name, translations]) => {
-    arr.push({ name, translations });
-  });
+    arr.push({ name, translations })
+  })
 
-  return arr;
+  return arr
 }

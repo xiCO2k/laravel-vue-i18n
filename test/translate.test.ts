@@ -88,6 +88,14 @@ it('replaces multiple occurrences with "trans" helper', async () => {
     .toBe('olá Francisco, olá Francisco')
 })
 
+it('replaces occurrences that have the same prefix name', async () => {
+  await global.mountPlugin();
+
+  expect(trans('Showing :from - :to of :total items',
+    { from: '1', to: '2', total: '300' }
+  )).toBe('Showing 1 - 2 of 300 items')
+});
+
 it('loads a lang', async () => {
   const wrapper = await global.mountPlugin(`<h1>{{ $t('Welcome, :name!', { name: 'Francisco' }) }}</h1>`, 'en');
 

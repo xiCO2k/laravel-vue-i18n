@@ -425,14 +425,16 @@ export class I18n {
   makeReplacements(message: string, replacements?: ReplacementsInterface): string {
     const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
-    Object.entries(replacements || []).forEach(([key, value]) => {
-      value = value.toString()
+    Object.entries(replacements || [])
+      .sort((a, b) => (a[0].length >= b[0].length ? -1 : 1))
+      .forEach(([key, value]) => {
+        value = value.toString()
 
-      message = message
-        .replace(new RegExp(`:${key}`, 'g'), value)
-        .replace(new RegExp(`:${key.toUpperCase()}`, 'g'), value.toUpperCase())
-        .replace(new RegExp(`:${capitalize(key)}`, 'g'), capitalize(value))
-    })
+        message = message
+          .replace(new RegExp(`:${key}`, 'g'), value)
+          .replace(new RegExp(`:${key.toUpperCase()}`, 'g'), value.toUpperCase())
+          .replace(new RegExp(`:${capitalize(key)}`, 'g'), capitalize(value))
+      })
 
     return message
   }

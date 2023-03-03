@@ -28,6 +28,10 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
 export const parseAll = (folderPath: string): { name: string; path: string }[] => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
 
+  if (! fs.statSync(folderPath).isDirectory()) {
+    return [];
+  }
+
   const folders = fs
     .readdirSync(folderPath)
     .filter((file) => fs.statSync(folderPath + path.sep + file).isDirectory())

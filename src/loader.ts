@@ -55,10 +55,10 @@ export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
       return Object.keys(translations).length > 0
     })
     .map(({ folder, translations }) => {
-      const name = `php_${folder}.json`
-      const path = folderPath + name
-
-      return { name, translations }
+      return {
+        name: `php_${folder}.json`,
+        translations,
+      }
     })
 }
 

@@ -3,7 +3,7 @@ import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'f
 import { parseAll, hasPhpTranslations } from './loader'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
 
-function mergeData(...data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
+function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
   const obj = {};
 
   data.forEach(({ name, translations }) => {
@@ -48,7 +48,10 @@ export default function i18n(langPath: string = 'lang') {
         return
       }
 
-      files = mergeData(parseAll(frameworkLangPath), parseAll(langPath));
+      files = mergeData([
+        ...parseAll(frameworkLangPath),
+        ...parseAll(langPath),
+      ]);
 
       files.forEach(({ name, translations }) => {
         writeFileSync(langPath + name, JSON.stringify(translations))

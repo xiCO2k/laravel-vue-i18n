@@ -30,7 +30,7 @@ export default function i18n(langPath: string = 'lang') {
   let exitHandlersBound: boolean = false
 
   const clean = () => {
-    files.forEach((file) => unlinkSync(file.path))
+    files.forEach((file) => unlinkSync(langPath + file.name))
 
     files = []
 

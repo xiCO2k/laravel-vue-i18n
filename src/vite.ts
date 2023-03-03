@@ -1,8 +1,9 @@
 import path from 'path'
 import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
 import { parseAll, hasPhpTranslations } from './loader'
+import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
 
-function mergeData(...data: { name: string, translations: { [key: string]: string } }) {
+function mergeData(...data: ParsedLangFileInterface[]) {
   const obj = {};
 
   data.forEach(({ name, translation }) => {
@@ -25,7 +26,7 @@ export default function i18n(langPath: string = 'lang') {
   const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep);
   langPath = langPath.replace(/[\\/]$/, '') + path.sep;
 
-  let files: { name: string; path: string }[] = []
+  let files: ParsedLangFileInterface[] = []
   let exitHandlersBound: boolean = false
 
   const clean = () => {

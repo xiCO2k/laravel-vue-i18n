@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { Engine } from 'php-parser'
+import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
 
 export const hasPhpTranslations = (folderPath: string): boolean => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
@@ -25,7 +26,7 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
   return false
 }
 
-export const parseAll = (folderPath: string): { name: string; path: string }[] => {
+export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
 
   if (! fs.existsSync(folderPath)) {
@@ -55,6 +56,7 @@ export const parseAll = (folderPath: string): { name: string; path: string }[] =
     })
     .map(({ folder, translations }) => {
       const name = `php_${folder}.json`
+      const path = folderPath + name
 
       return { name, translations }
     })

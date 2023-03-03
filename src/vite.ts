@@ -66,7 +66,7 @@ export default function i18n(langPath: string = 'lang') {
     buildEnd: clean,
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        files = [...parseAll(frameworkLangPath, langPath), ...parseAll(langPath)];
+        files = [...parseAll(frameworkLangPath), ...parseAll(langPath)];
       }
     },
     configureServer(server) {

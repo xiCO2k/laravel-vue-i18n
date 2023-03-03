@@ -3,7 +3,7 @@ import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'f
 import { parseAll, hasPhpTranslations } from './loader'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file';
 
-function mergeData(...data: ParsedLangFileInterface[]) {
+function mergeData(...data: ParsedLangFileInterface) {
   const obj = {};
 
   data.forEach(({ name, translations }) => {

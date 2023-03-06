@@ -27,7 +27,7 @@ mix.extend(
     context: any
 
     register(langPath: string = 'lang'): void {
-      this.langPath = this.context.paths.rootPath + path.sep + langPath
+      this.langPath = this.context.paths.rootPath + path.sep + langPath + path.sep
       this.frameworkLangPath =
         this.context.paths.rootPath +
         path.sep +
@@ -51,7 +51,10 @@ mix.extend(
 
       config.plugins.push(
         new BeforeBuildPlugin(() => {
-          files = generateFiles(this.langPath, [...parseAll(this.frameworkLangPath), ...parseAll(this.langPath)])
+          files = generateFiles(this.langPath, [
+            ...parseAll(this.frameworkLangPath),
+            ...parseAll(this.langPath)
+          ])
         })
       )
 

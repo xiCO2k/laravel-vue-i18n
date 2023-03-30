@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans } from '../src'
+import { i18nVue, trans, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans } from '../src'
 import { reset as resetLoader } from '../src/loader'
 
 beforeEach(() => reset());
@@ -232,4 +232,12 @@ it('does not translate existing strings which contain delimiter symbols', async 
 
   expect(trans('Start/end')).toBe('Início/Fim');
   expect(trans('Get started.')).toBe('Comece.');
+})
+
+it('does not replace slashes with dots when no translations are available', async () => {
+  await global.mountPlugin()
+
+  const source = 'This/is/missing/in/the/translations/file/intentionally/to/prove/all/slashes/stays.'
+
+  expect(trans(source)).toBe(source);
 })

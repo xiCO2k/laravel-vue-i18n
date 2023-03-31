@@ -1,16 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { i18nVue } from '../src'
 import { generateFiles, parseAll } from '../src/loader'
+import type { PluginOptionsInterface } from '../src/interfaces/plugin-options'
 
-global.mountPlugin = async (template = '<div />', lang = 'pt', fallbackLang = 'pt', fallbackMissingTranslations = false) => {
+global.mountPluginUnconfigured = async (template = '<div />', options?: PluginOptionsInterface) => {
   const wrapper = mount({ template }, {
     global: {
-      plugins: [[i18nVue, {
-        lang,
-        fallbackLang,
-        fallbackMissingTranslations,
-        resolve: lang => import(`./fixtures/lang/${lang}.json`),
-      }]]
+      plugins: [[i18nVue, options]]
     }
   });
 
@@ -19,20 +15,28 @@ global.mountPlugin = async (template = '<div />', lang = 'pt', fallbackLang = 'p
   return wrapper;
 }
 
-global.mountPluginWithRequire = async (template = '<div />', lang = 'pt', fallbackLang = 'pt') => {
-  const wrapper = mount({ template }, {
-    global: {
-      plugins: [[i18nVue, {
-        lang,
-        fallbackLang,
-        resolve: (lang) => require(`./fixtures/lang/${lang}.json`),
-      }]]
-    }
+global.mountPlugin = async (
+  template = '<div />',
+  lang = 'pt',
+  fallbackLang = 'pt',
+  fallbackMissingTranslations = false,
+  preserveSlashesInKeys = false,
+) => {
+  return global.mountPluginUnconfigured(template, {
+    lang,
+    fallbackLang,
+    fallbackMissingTranslations,
+    preserveSlashesInKeys,
+    resolve: lang => import(`./fixtures/lang/${lang}.json`),
   });
+}
 
-  await new Promise(resolve => setTimeout(resolve))
-
-  return wrapper;
+global.mountPluginWithRequire = async (template = '<div />', lang = 'pt', fallbackLang = 'pt') => {
+  return global.mountPluginUnconfigured(template, {
+    lang,
+    fallbackLang,
+    resolve: (lang) => require(`./fixtures/lang/${lang}.json`),
+  });
 }
 
 global.mixLoader = () => {

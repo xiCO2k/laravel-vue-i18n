@@ -22,6 +22,7 @@ const DEFAULT_OPTIONS: OptionsInterface = {
   lang: !isServer && document.documentElement.lang ? document.documentElement.lang.replace('-', '_') : null,
   fallbackLang: 'en',
   fallbackMissingTranslations: false,
+  preserveSlashesInKeys: false,
   resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} })),
   onLoad: (lang: string) => {}
 }
@@ -381,7 +382,7 @@ export class I18n {
    * Get the translation for the given key and watch for any changes.
    */
   wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
-    if (!this.activeMessages[key] && !this.activeMessages[`${key}.0`]) {
+    if (!this.options.preserveSlashesInKeys && !this.activeMessages[key] && !this.activeMessages[`${key}.0`]) {
       key = key.replace(/\//g, '.')
     }
 

@@ -18,13 +18,7 @@ it('translates with "trans" helper', async () => {
 })
 
 it('returns the same message if there is no resolve method provided', async () => {
-  const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
-    global: {
-      plugins: [i18nVue]
-    }
-  });
-
-  await new Promise(resolve => setTimeout(resolve));
+  const wrapper = await global.mountPluginUnconfigured("<h1>{{ $t('Welcome!') }}</h1>");
 
   expect(wrapper.html()).toBe('<h1>Welcome!</h1>');
   expect(trans('Welcome!')).toBe('Welcome!');
@@ -148,15 +142,9 @@ it('checks if watching translation works', async () => {
 })
 
 it('resolves translated data without Promise', async () => {
-  const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
-    global: {
-      plugins: [[i18nVue, {
-        resolve: () => ({ 'Foo': 'Bar' }),
-      }]]
-    }
+  const wrapper = await global.mountPluginUnconfigured("<h1>{{ $t('Welcome!') }}</h1>", {
+    resolve: () => ({ 'Foo': 'Bar' }),
   });
-
-  await new Promise(resolve => setTimeout(resolve));
 
   expect(trans('Foo')).toBe('Bar');
 });
@@ -202,7 +190,6 @@ it('resolves translated data with loader if there is only .php files for that la
   expect(wrapper.html()).toBe('<h1>Ces identifiants ne correspondent pas à nos enregistrements.</h1>')
 })
 
-
 it('translates arrays with $t mixin', async () => {
   const wrapper = await global.mountPlugin(`<h1 v-for="line in $t('auth.arr')">{{line}}</h1>`, 'de');
 
@@ -234,8 +221,18 @@ it('does not translate existing strings which contain delimiter symbols', async 
   expect(trans('Get started.')).toBe('Comece.');
 })
 
-it('does not replace slashes with dots when no translations are available', async () => {
+it('replaces slashes with dots when no translations are available', async () => {
   await global.mountPlugin()
+
+  const source = 'This/is/missing/in/the/translations/file/intentionally.'
+
+  expect(trans(source)).toBe(source.replace(/\//g, '.'));
+})
+
+it('does not replace slashes with dots when no translations are available and `preserveSlashesInKeys` is `true`', async () => {
+  const wrapper = global.mountPluginUnconfigured("<h1>{{ $t('Welcome!') }}</h1>", {
+    preserveSlashesInKeys: true,
+  });
 
   const source = 'This/is/missing/in/the/translations/file/intentionally/to/prove/all/slashes/stays.'
 

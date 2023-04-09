@@ -51,10 +51,7 @@ mix.extend(
 
       config.plugins.push(
         new BeforeBuildPlugin(() => {
-          files = generateFiles(this.langPath, [
-            ...parseAll(this.frameworkLangPath),
-            ...parseAll(this.langPath)
-          ])
+          files = generateFiles(this.langPath, [...parseAll(this.frameworkLangPath), ...parseAll(this.langPath)])
         })
       )
 

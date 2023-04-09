@@ -233,3 +233,15 @@ it('does not translate existing strings which contain delimiter symbols', async 
   expect(trans('Start/end')).toBe('Início/Fim');
   expect(trans('Get started.')).toBe('Comece.');
 })
+
+it('allows to use html tags on translations', async () => {
+  await global.mountPlugin()
+
+  expect(trans('<div>Welcome</div>')).toBe('<div>Bem-vindo</div>');
+})
+
+it('allows to use html tags on translations even if the key does not exist', async () => {
+  await global.mountPlugin()
+
+  expect(trans('<div>Not Exist</div>')).toBe('<div>Not Exist</div>');
+})

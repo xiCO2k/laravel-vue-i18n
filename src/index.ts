@@ -381,22 +381,7 @@ export class I18n {
    * Get the translation for the given key and watch for any changes.
    */
   wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
-    if (!this.activeMessages[key] && !this.activeMessages[`${key}.0`]) {
-      key = key.replace(/\//g, '.')
-    }
-
-    if (!this.activeMessages[key]) {
-      const hasChildItems = this.activeMessages[`${key}.0`] !== undefined
-
-      if (hasChildItems) {
-        const childItems = Object.entries(this.activeMessages)
-          .filter((item) => item[0].startsWith(`${key}.`))
-          .map((item) => item[1])
-        this.activeMessages[key] = reactive(childItems)
-      } else {
-        this.activeMessages[key] = key
-      }
-    }
+    this.activeMessages[key] = this.findTranslation(key) || this.findTranslation(key.replace(/\//g, '.')) || key
 
     return computed(() => this.makeReplacements(this.activeMessages[key], replacements))
   }
@@ -417,6 +402,27 @@ export class I18n {
     replacements.count = number.toString()
 
     return computed(() => this.makeReplacements(choose(message.value, number, this.options.lang), replacements))
+  }
+
+  /**
+   * Find translation in memory.
+   */
+  findTranslation(key) {
+    if (this.activeMessages[key]) {
+      return this.activeMessages[key]
+    }
+
+    const hasChildItems = this.activeMessages[`${key}.0`] !== undefined
+
+    if (hasChildItems) {
+      const childItems = Object.entries(this.activeMessages)
+        .filter((item) => item[0].startsWith(`${key}.`))
+        .map((item) => item[1])
+
+      return reactive(childItems)
+    }
+
+    return this.activeMessages[key]
   }
 
   /**

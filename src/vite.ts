@@ -2,8 +2,9 @@ import path from 'path'
 import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
 import { parseAll, hasPhpTranslations, generateFiles } from './loader'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
+import { Plugin } from 'vite'
 
-export default function i18n(langPath: string = 'lang') {
+export default function i18n(langPath: string = 'lang'): Plugin {
   langPath = langPath.replace(/[\\/]$/, '') + path.sep
 
   const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)

@@ -99,6 +99,16 @@ export const reset = (): void => {
 export const trans_choice = transChoice
 
 /**
+ * Type declarations for `$t` and `$tChoice` mixins.
+ */
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $t: typeof trans
+    $tChoice: typeof transChoice
+  }
+}
+
+/**
  * The Vue Plugin. to be used on your Vue app like this: `app.use(i18nVue)`
  */
 export const i18nVue: Plugin = {

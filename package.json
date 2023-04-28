@@ -16,6 +16,7 @@
   "description": "allows to connect your `Laravel` Framework localization files with `Vue`.",
   "main": "dist/cjs/index.js",
   "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "watch": "tsc --watch",
     "test": "jest",

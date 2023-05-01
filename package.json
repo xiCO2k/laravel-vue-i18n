@@ -38,13 +38,14 @@
     "@vue/test-utils": "^2.2.7",
     "babel-jest": "^27.5.1",
     "babel-plugin-transform-vite-meta-env": "^1.0.3",
-    "laravel-mix": "^6.0.49",
     "jest": "^27.5.1",
+    "laravel-mix": "^6.0.49",
     "prettier": "^2.8.3",
     "source-map": "^0.7.4",
     "ts-jest": "^27.1.5",
     "ts-loader": "^9.4.2",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "vite": "^4.3.3"
   },
   "dependencies": {
     "php-parser": "3.1.3",

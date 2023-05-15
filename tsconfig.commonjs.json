@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipDefaultLibCheck": true,
-    "outDir": "dist/cjs"
+    "outDir": "dist"
   },
   "include": [
     "src/**/*.ts"

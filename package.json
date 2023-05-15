@@ -38,7 +38,7 @@
   },
   "types": "dist/index.d.ts",
   "scripts": {
-    "watch": "tsc --watch",
+    "watch": "tsc-multi --watch",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "prettier -c \"src/**/*.(ts|js|vue)\" --write",

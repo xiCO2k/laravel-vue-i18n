@@ -1,0 +1,14 @@
+{
+  "targets": [
+    {
+      "extname": ".mjs",
+      "target": "ES2020",
+      "module": "ES2020"
+    },
+    {
+      "extname": ".cjs",
+      "target": "ES2015",
+      "module": "commonjs"
+    }
+  ]
+}

@@ -3,19 +3,15 @@
     "target": "ES2020",
     "module": "ES2020",
     "moduleResolution": "node",
+    "outDir": "dist",
     "resolveJsonModule": true,
     "declaration": true,
     "esModuleInterop": true,
-    "outDir": "dist"
+    "skipDefaultLibCheck": true,
+    "sourceMap": true
   },
   "include": [
     "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "src/vite.ts",
-    "src/mix.ts",
-    "src/loader.ts",
   ],
   "rules": {
     "no-console": false

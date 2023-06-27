@@ -7,6 +7,7 @@ import { ReplacementsInterface } from './interfaces/replacements'
 import { choose } from './pluralization'
 import { avoidExceptionOnPromise, avoidException } from './utils/avoid-exceptions'
 import { hasPhpTranslations } from './utils/has-php-translations'
+import { resolveLangFile } from './utils/resolve-lang-file'
 
 const isServer = typeof window === 'undefined'
 

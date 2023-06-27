@@ -12,6 +12,7 @@ export default function i18n(langPath: string = 'lang'): Plugin {
   let exitHandlersBound: boolean = false
 
   const clean = () => {
+    console.log('clean')
     files.forEach((file) => unlinkSync(langPath + file.name))
 
     files = []
@@ -25,12 +26,6 @@ export default function i18n(langPath: string = 'lang'): Plugin {
     name: 'i18n',
     enforce: 'post',
     config(config) {
-      if (!hasPhpTranslations(frameworkLangPath) && !hasPhpTranslations(langPath)) {
-        return
-      }
-
-      files = generateFiles(langPath, [...parseAll(frameworkLangPath), ...parseAll(langPath)])
-
       /** @ts-ignore */
       process.env.VITE_LARAVEL_VUE_I18N_HAS_PHP = true
 
@@ -41,6 +36,13 @@ export default function i18n(langPath: string = 'lang'): Plugin {
       }
     },
     buildEnd: clean,
+    buildStart() {
+      if (!hasPhpTranslations(frameworkLangPath) && !hasPhpTranslations(langPath)) {
+        return
+      }
+
+      files = generateFiles(langPath, [...parseAll(frameworkLangPath), ...parseAll(langPath)])
+    },
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
         files = generateFiles(langPath, [...parseAll(frameworkLangPath), ...parseAll(langPath)])

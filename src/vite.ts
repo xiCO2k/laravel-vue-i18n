@@ -12,7 +12,6 @@ export default function i18n(langPath: string = 'lang'): Plugin {
   let exitHandlersBound: boolean = false
 
   const clean = () => {
-    console.log('clean')
     files.forEach((file) => unlinkSync(langPath + file.name))
 
     files = []

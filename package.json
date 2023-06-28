@@ -39,6 +39,9 @@
     }
   },
   "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "watch": "tsc-multi --watch",
     "test": "jest",

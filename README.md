@@ -48,13 +48,13 @@ createApp()
 
 #### SSR (Server Side Rendering)
 
-For Server Side Rendering the resolve method should not receive a `Promise` and instead take advantage of the `globEager` method like this:
+For Server Side Rendering the resolve method should not receive a `Promise` and instead take advantage of the `eager` param like this:
 
 ```js
 .use(i18nVue, {
     lang: 'pt',
     resolve: lang => {
-        const langs = import.meta.globEager('../../lang/*.json');
+        const langs = import.meta.glob('../../lang/*.json', { eager: true });
         return langs[`../../lang/${lang}.json`].default;
     },
 })

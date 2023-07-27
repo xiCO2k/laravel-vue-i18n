@@ -6,3 +6,7 @@ import { OptionsInterface } from './options'
 export interface PluginOptionsInterface extends OptionsInterface {
   shared?: boolean
 }
+
+export interface VitePluginOptionsInterface {
+  additionalLangPaths?: string[]
+}

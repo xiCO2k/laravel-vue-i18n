@@ -86,6 +86,35 @@ export default defineConfig({
 });
 ```
 
+##### Vite plugin options
+
+In addition to that, you can use this `Vite` plugin with additional paths to load from, this is usefull when you are using a package that let's you override your translations, or in case you are getting your application's lang files from different paths. 
+
+```js
+// vite.config.js
+import i18n from 'laravel-vue-i18n/vite';
+
+export default defineConfig({
+    plugins: [
+        laravel([
+            'resources/css/app.css'
+            'resources/js/app.js',
+        ]),
+        vue(),
+
+        i18n({
+            // you can also change your langPath here
+            // langPath: 'locales' 
+            additionalLangPaths: [
+                'public/locales' // Load translations from this path too! 
+            ]
+        }),
+    ],
+});
+```
+
+Note that if one key found in two paths, priority will be given to the last given path between these two (In this example translation key will be loaded from `public/locales`)
+
 > During the `npm run dev` execution time, the plugin will create some files like this `php_{lang}.json` on your lang folder.
 > And to avoid that to be commited to your code base, I suggest to your `.gitignore` this like:
 

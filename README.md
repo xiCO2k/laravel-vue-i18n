@@ -86,9 +86,11 @@ export default defineConfig({
 });
 ```
 
-##### Vite plugin options
+#### Vite plugin options
 
 In addition to that, you can use this `Vite` plugin with additional paths to load from, this is usefull when you are using a package that let's you override your translations, or in case you are getting your application's lang files from different paths. 
+
+Note that if one key found in two paths, priority will be given to the last given path between these two (In this example translation key will be loaded from `public/locales`)
 
 ```js
 // vite.config.js
@@ -112,8 +114,6 @@ export default defineConfig({
     ],
 });
 ```
-
-Note that if one key found in two paths, priority will be given to the last given path between these two (In this example translation key will be loaded from `public/locales`)
 
 > During the `npm run dev` execution time, the plugin will create some files like this `php_{lang}.json` on your lang folder.
 > And to avoid that to be commited to your code base, I suggest to your `.gitignore` this like:

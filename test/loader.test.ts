@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { generateFiles, parseAll, parse, hasPhpTranslations, reset } from '../src/loader';
+import { generateFiles, parseAll, parse, hasPhpTranslations, reset, prepareExtendedParsedLangFiles } from '../src/loader';
 
 beforeEach(() => reset(__dirname + '/fixtures/lang/'));
 
@@ -40,6 +40,43 @@ it('includes .php lang file in nested subdirectory in .json', () => {
     expect(langEn['nested.cars.car.is_electric']).toBe('Electric');
     expect(langEn['nested.cars.car.foo.level1.level2']).toBe('barpt');
 })
+
+it('inclues additional lang paths to load from', () => {
+    const langPath = __dirname + '/fixtures/lang/';
+    const additionalLangPaths = [
+        __dirname + '/fixtures/locales/'
+    ];
+
+    const langPaths = prepareExtendedParsedLangFiles([
+        langPath,
+        ...additionalLangPaths,
+    ]);
+
+    const files = generateFiles(langPath, langPaths);
+
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
+
+    expect(langEn['auth.throttle']).toBe('Too many login attempts. Please try again in :seconds seconds.');
+});
+
+it('Overwrites translations from additional lang paths', () => {
+    const langPath = __dirname + '/fixtures/lang/';
+    const additionalLangPaths = [
+        __dirname + '/fixtures/locales/'
+    ];
+
+    const langPaths = prepareExtendedParsedLangFiles([
+        langPath,
+        ...additionalLangPaths,
+    ]);
+
+    const files = generateFiles(langPath, langPaths);
+
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
+
+    expect(langEn['auth.failed']).toBe('These credentials are incorrect.');
+    expect(langEn['domain.user.sub_dir_support_is_amazing']).toBe('Subdirectory override is amazing');
+});
 
 it('transforms .php lang to .json', () => {
     const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());

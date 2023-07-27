@@ -147,12 +147,8 @@ export const readThroughDir = (dir) => {
   return data
 }
 
-export const prepareExtendedParsedLangFiles = (langPaths: string[]) => 
-  langPaths.reduce(
-    (acc, langPath) => [...acc, ...parseAll(langPath)],
-    new Array<ParsedLangFileInterface>()
-  )
-
+export const prepareExtendedParsedLangFiles = (langPaths: string[]) =>
+  langPaths.reduce((acc, langPath) => [...acc, ...parseAll(langPath)], new Array<ParsedLangFileInterface>())
 
 export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
   data = mergeData(data)

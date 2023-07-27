@@ -5,7 +5,7 @@ import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 import { VitePluginOptionsInterface } from './interfaces/plugin-options'
 import { Plugin } from 'vite'
 
-export default function i18n(options: string|VitePluginOptionsInterface = 'lang'): Plugin {
+export default function i18n(options: string | VitePluginOptionsInterface = 'lang'): Plugin {
   let langPath = typeof options === 'string' ? options : options.langPath ?? 'lang'
   langPath = langPath.replace(/[\\/]$/, '') + path.sep
 
@@ -44,21 +44,13 @@ export default function i18n(options: string|VitePluginOptionsInterface = 'lang'
         return
       }
 
-      const langPaths = prepareExtendedParsedLangFiles([
-        frameworkLangPath,
-        langPath,
-        ...additionalLangPaths,
-      ])
+      const langPaths = prepareExtendedParsedLangFiles([frameworkLangPath, langPath, ...additionalLangPaths])
 
       files = generateFiles(langPath, langPaths)
     },
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        const langPaths = prepareExtendedParsedLangFiles([
-          frameworkLangPath,
-          langPath,
-          ...additionalLangPaths,
-        ])
+        const langPaths = prepareExtendedParsedLangFiles([frameworkLangPath, langPath, ...additionalLangPaths])
 
         files = generateFiles(langPath, langPaths)
       }

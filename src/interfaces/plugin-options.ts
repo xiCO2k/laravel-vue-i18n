@@ -8,5 +8,6 @@ export interface PluginOptionsInterface extends OptionsInterface {
 }
 
 export interface VitePluginOptionsInterface {
+  langPath?: string,
   additionalLangPaths?: string[]
 }

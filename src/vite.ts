@@ -1,12 +1,15 @@
 import path from 'path'
-import { existsSync, writeFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
-import { parseAll, hasPhpTranslations, generateFiles, prepareExtendedParsedLangFiles } from './loader'
+import { existsSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
+import { hasPhpTranslations, generateFiles, prepareExtendedParsedLangFiles } from './loader'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 import { VitePluginOptionsInterface } from './interfaces/plugin-options'
 import { Plugin } from 'vite'
 
-export default function i18n(langPath: string = 'lang', options: VitePluginOptionsInterface = {}): Plugin {
+export default function i18n(options: string|VitePluginOptionsInterface = 'lang'): Plugin {
+  let langPath = typeof options === 'string' ? options : options.langPath ?? 'lang'
   langPath = langPath.replace(/[\\/]$/, '') + path.sep
+
+  const additionalLangPaths = typeof options === 'string' ? [] : options.additionalLangPaths ?? []
 
   const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)
   let files: ParsedLangFileInterface[] = []
@@ -41,23 +44,23 @@ export default function i18n(langPath: string = 'lang', options: VitePluginOptio
         return
       }
 
-      const additionalLangPaths = prepareExtendedParsedLangFiles([
+      const langPaths = prepareExtendedParsedLangFiles([
         frameworkLangPath,
         langPath,
-        ...(options.additionalLangPaths ?? []),
+        ...additionalLangPaths,
       ])
 
-      files = generateFiles(langPath, additionalLangPaths)
+      files = generateFiles(langPath, langPaths)
     },
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        const additionalLangPaths = prepareExtendedParsedLangFiles([
+        const langPaths = prepareExtendedParsedLangFiles([
           frameworkLangPath,
           langPath,
-          ...(options.additionalLangPaths ?? []),
+          ...additionalLangPaths,
         ])
 
-        files = generateFiles(langPath, additionalLangPaths)
+        files = generateFiles(langPath, langPaths)
       }
     },
     configureServer(server) {

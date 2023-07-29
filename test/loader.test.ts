@@ -59,7 +59,7 @@ it('inclues additional lang paths to load from', () => {
     expect(langEn['auth.throttle']).toBe('Too many login attempts. Please try again in :seconds seconds.');
 });
 
-it('Overwrites translations from additional lang paths', () => {
+it('overwrites translations from additional lang paths', () => {
     const langPath = __dirname + '/fixtures/lang/';
     const additionalLangPaths = [
         __dirname + '/fixtures/locales/'

@@ -245,3 +245,15 @@ it('allows to use html tags on translations even if the key does not exist', asy
 
   expect(trans('<div>Not Exist</div>')).toBe('<div>Not Exist</div>');
 })
+
+it('checks if watching wTrans works if key does not exist', async () => {
+  await global.mountPlugin('<div />');
+
+  const translated = wTrans('Not existing translation');
+
+  expect(translated.value).toBe('Not existing translation');
+
+  await loadLanguageAsync('en');
+
+  expect(translated.value).toBe('Not existing translation');
+})

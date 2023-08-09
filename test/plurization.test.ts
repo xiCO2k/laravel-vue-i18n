@@ -142,3 +142,15 @@ it.each([
 
   expect(choose(message, number, lang)).toBe(correctMessage);
 });
+
+it('checks if watching wTransChoice works if key does not exist', async () => {
+    await global.mountPlugin('<div />');
+
+    const translated = wTransChoice('Not existing translation :count', 1);
+
+    expect(translated.value).toBe('Not existing translation 1');
+
+    await loadLanguageAsync('en');
+
+    expect(translated.value).toBe('Not existing translation 1');
+})

@@ -17,6 +17,12 @@ it('translates with "trans" helper', async () => {
   expect(trans('Welcome!')).toBe('Bem-vindo!');
 })
 
+it('handles empty translations', async () => {
+  await global.mountPlugin();
+
+  expect(trans('Empty string')).toBe('');
+})
+
 it('returns the same message if there is no resolve method provided', async () => {
   const wrapper = mount({ template: `<h1>{{ $t('Welcome!') }}</h1>` }, {
     global: {

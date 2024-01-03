@@ -1,4 +1,4 @@
-import {reactive, Plugin, computed, ComputedRef, watchEffect} from 'vue'
+import { reactive, Plugin, computed, ComputedRef, watchEffect } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { PluginOptionsInterface } from './interfaces/plugin-options'
 import { LanguageInterface } from './interfaces/language'
@@ -349,13 +349,13 @@ export class I18n {
     }
 
     for (const [key, value] of Object.entries(this.fallbackMessages)) {
-      if (!this.activeMessages[key] || this.activeMessages[key] === key) {
+      if (!this.isValid(messages[key]) || this.activeMessages[key] === key) {
         this.activeMessages[key] = value
       }
     }
 
     for (const [key] of Object.entries(this.activeMessages)) {
-      if (!messages[key] && !this.fallbackMessages[key]) {
+      if (!this.isValid(messages[key]) && !this.isValid(this.fallbackMessages[key])) {
         this.activeMessages[key] = null
       }
     }
@@ -392,7 +392,13 @@ export class I18n {
    */
   wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
     watchEffect(() => {
-      this.activeMessages[key] = this.findTranslation(key) || this.findTranslation(key.replace(/\//g, '.')) || key
+      let value = this.findTranslation(key)
+
+      if (!this.isValid(value)) {
+        value = this.findTranslation(key.replace(/\//g, '.'))
+      }
+
+      this.activeMessages[key] = this.isValid(value) ? value : key
     })
 
     return computed(() => this.makeReplacements(this.activeMessages[key], replacements))
@@ -420,7 +426,7 @@ export class I18n {
    * Find translation in memory.
    */
   findTranslation(key) {
-    if (this.activeMessages[key]) {
+    if (this.isValid(this.activeMessages[key])) {
       return this.activeMessages[key]
     }
 
@@ -455,6 +461,13 @@ export class I18n {
       })
 
     return message
+  }
+
+  /**
+   * Checks if the message provided is valid.
+   */
+  isValid(message: string | null | undefined): boolean {
+    return message !== undefined && message !== null
   }
 
   /**

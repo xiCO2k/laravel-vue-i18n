@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans } from '../src'
+import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans, I18n } from '../src'
 import { reset as resetLoader } from '../src/loader'
 
 beforeEach(() => reset());
@@ -107,6 +107,21 @@ it('loads a lang', async () => {
 
   await loadLanguageAsync('pt');
   expect(wrapper.html()).toBe('<h1>Bem-vindo, Francisco!</h1>')
+})
+
+it('only keep one item for each lang even with multiple calls of the `loadLanguageAsync`', async () => {
+  const wrapper = await global.mountPlugin();
+
+  expect(I18n.loaded.length).toBe(1);
+
+  // Purpose call multiple times to replicate a multiple call.
+  await Promise.all([
+    loadLanguageAsync('en'),
+    loadLanguageAsync('en'),
+  ]);
+
+  expect(I18n.loaded.length).toBe(2);
+
 })
 
 it('returns the active lang', async () => {

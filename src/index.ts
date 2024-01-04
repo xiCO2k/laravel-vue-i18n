@@ -132,7 +132,7 @@ export class I18n {
   /**
    * Stores the loaded languages.
    */
-  private static loaded: LanguageInterface[] = []
+  public static loaded: LanguageInterface[] = []
 
   // Stores options for the current instance
   private options: OptionsInterface
@@ -317,7 +317,7 @@ export class I18n {
     }
 
     const data: LanguageInterface = { lang, messages }
-    I18n.loaded.push(data)
+    this.addLoadedLang(data)
 
     return this.setLanguage(data)
   }
@@ -327,10 +327,25 @@ export class I18n {
       this.fallbackMessages[key] = value
     }
 
-    I18n.loaded.push({
+    this.addLoadedLang({
       lang: this.options.fallbackLang,
       messages
     })
+  }
+
+  /**
+   * Adds to the array of loaded languages.
+   */
+  addLoadedLang(data: LanguageInterface): void {
+    const foundIndex = I18n.loaded.findIndex((item) => item.lang === data.lang)
+
+    if (foundIndex !== -1) {
+      I18n.loaded[foundIndex] = data
+
+      return
+    }
+
+    I18n.loaded.push(data)
   }
 
   /**

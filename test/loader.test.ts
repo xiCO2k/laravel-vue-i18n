@@ -98,6 +98,13 @@ it('transforms simple index array to .json', () => {
     expect(lang['arr.1']).toBe('bar');
 });
 
+it('ignores empty `array` or `null` translations', () => {
+    const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/ignore.php').toString());
+
+    expect(lang['empty_array']).toBe(undefined);
+    expect(lang['null']).toBe(undefined);
+});
+
 it('checks if there is .php translations', () => {
     expect(hasPhpTranslations(__dirname + '/fixtures/lang/')).toBe(true);
     expect(hasPhpTranslations(__dirname + '/fixtures/wronglangfolder/')).toBe(false);

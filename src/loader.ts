@@ -77,6 +77,10 @@ const parseItem = (expr) => {
     return expr.value
   }
 
+  if (expr.kind === 'nullkeyword') {
+    return null;
+  }
+
   if (expr.kind === 'array') {
     let items = expr.items.map((item) => parseItem(item))
 
@@ -101,6 +105,10 @@ const parseItem = (expr) => {
 const convertToDotsSyntax = (list) => {
   const flatten = (items, context = '') => {
     const data = {}
+
+    if (items === null) {
+      return data;
+    }
 
     Object.entries(items).forEach(([key, value]) => {
       if (typeof value === 'string') {

@@ -461,7 +461,7 @@ export class I18n {
   /**
    * Make the place-holder replacements on a line.
    */
-  makeReplacements(message: string, replacements?: ReplacementsInterface): string {
+  makeReplacements(message?: string, replacements?: ReplacementsInterface): string {
     const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
     Object.entries(replacements || [])
@@ -469,7 +469,7 @@ export class I18n {
       .forEach(([key, value]) => {
         value = value.toString()
 
-        message = message
+        message = (message || '')
           .replace(new RegExp(`:${key}`, 'g'), value)
           .replace(new RegExp(`:${key.toUpperCase()}`, 'g'), value.toUpperCase())
           .replace(new RegExp(`:${capitalize(key)}`, 'g'), capitalize(value))

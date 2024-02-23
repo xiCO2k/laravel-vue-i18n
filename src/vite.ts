@@ -16,7 +16,12 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
   let exitHandlersBound: boolean = false
 
   const clean = () => {
-    files.forEach((file) => unlinkSync(langPath + file.name))
+    files.forEach((file) => {
+      const filePath = langPath + file.name
+      if (existsSync(filePath)) {
+        unlinkSync(filePath)
+      }
+    })
 
     files = []
 

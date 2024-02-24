@@ -413,7 +413,7 @@ export class I18n {
         value = this.findTranslation(key.replace(/\//g, '.'))
       }
 
-      this.activeMessages[key] = this.isValid(value) ? value : key
+      this.activeMessages[key] = this.isValid(value) ? value : (this.isLoaded() ? key : '')
     })
 
     return computed(() => this.makeReplacements(this.activeMessages[key], replacements))

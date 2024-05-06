@@ -242,6 +242,7 @@ it('translates a possible nested item, and if not exists check on the root level
 });
 
 it('translates a nested file item while using "/" and "." at the same time as a delimiter', async () => {
+  global.mixLoader();
   await global.mountPlugin()
 
   expect(trans('nested/cars/car.is_electric')).toBe('É elétrico?');

@@ -70,7 +70,7 @@ it('allows resetting all data', async () => {
 })
 
 it('calls onLoad when loaded', async () => {
-    const onLoadFunction = jest.fn()
+    const onLoadFunction = vi.fn()
 
     const i18n = new I18n({
         lang: 'pt',
@@ -86,7 +86,7 @@ it('calls onLoad when loaded', async () => {
 })
 
 it('can override missing translations with fallback language translations', async () => {
-    const onLoadFunction = jest.fn()
+    const onLoadFunction = vi.fn()
     const i18n = new I18n({
         fallbackLang: 'en',
         fallbackMissingTranslations: true,

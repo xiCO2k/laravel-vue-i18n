@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import {mount} from "@vue/test-utils";
 import { i18nVue } from '../src'
 import { generateFiles, parseAll } from '../src/loader'
 
@@ -9,7 +9,10 @@ global.mountPlugin = async (template = '<div />', lang = 'pt', fallbackLang = 'p
         lang,
         fallbackLang,
         fallbackMissingTranslations,
-        resolve: lang => import(`./fixtures/lang/${lang}.json`),
+        resolve: async lang => {
+            const langs = import.meta.glob('./fixtures/lang/*.json');
+            return await langs[`./fixtures/lang/${lang}.json`]();
+        },
       }]]
     }
   });
@@ -25,7 +28,10 @@ global.mountPluginWithRequire = async (template = '<div />', lang = 'pt', fallba
       plugins: [[i18nVue, {
         lang,
         fallbackLang,
-        resolve: (lang) => require(`./fixtures/lang/${lang}.json`),
+        resolve: (lang) => {
+          const langs = import.meta.glob('./fixtures/lang/*.json', { eager: true });
+          return langs[`./fixtures/lang/${lang}.json`].default;
+        },
       }]]
     }
   });
@@ -37,9 +43,8 @@ global.mountPluginWithRequire = async (template = '<div />', lang = 'pt', fallba
 
 global.mixLoader = () => {
   const langPath = __dirname + '/fixtures/lang/';
+
   generateFiles(langPath, parseAll(langPath));
 
-  process.env = Object.assign(process.env, {
-    LARAVEL_VUE_I18N_HAS_PHP: 'true',
-  });
+  process.env.LARAVEL_VUE_I18N_HAS_PHP = true;
 }

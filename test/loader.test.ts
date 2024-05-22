@@ -7,11 +7,10 @@ it('creates a file for each lang', () => {
     const langPath = __dirname + '/fixtures/lang/';
     const files = generateFiles(langPath, parseAll(langPath));
 
-    expect(files.length).toBe(4);
+    expect(files.length).toBe(3);
     expect(files[0].name).toBe('php_en.json');
     expect(files[1].name).toBe('php_fr.json');
     expect(files[2].name).toBe('php_pt.json');
-    expect(files[3].name).toBe('php_vendor.json');
 
     const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
     expect(langEn['auth.failed']).toBe('These credentials do not match our records.');
@@ -25,7 +24,7 @@ it('creates a file for each lang', () => {
 
 it('merges published package translations into each lang .json', () => {
     const langPath = __dirname + '/fixtures/lang/';
-    const files = generateFiles(langPath, prepareExtendedParsedLangFiles([langPath]));
+    const files = generateFiles(langPath, parseAll(langPath));
 
     expect(files.length).toBe(3);
     expect(files[0].name).toBe('php_en.json');

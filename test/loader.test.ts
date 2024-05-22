@@ -7,10 +7,11 @@ it('creates a file for each lang', () => {
     const langPath = __dirname + '/fixtures/lang/';
     const files = generateFiles(langPath, parseAll(langPath));
 
-    expect(files.length).toBe(3);
+    expect(files.length).toBe(4);
     expect(files[0].name).toBe('php_en.json');
     expect(files[1].name).toBe('php_fr.json');
     expect(files[2].name).toBe('php_pt.json');
+    expect(files[3].name).toBe('php_vendor.json');
 
     const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
     expect(langEn['auth.failed']).toBe('These credentials do not match our records.');
@@ -20,6 +21,30 @@ it('creates a file for each lang', () => {
     const langPt = JSON.parse(fs.readFileSync(langPath + files[2].name).toString());
     expect(langPt['auth.failed']).toBe('As credenciais indicadas não coincidem com as registadas no sistema.');
     expect(langPt['auth.foo.level1.level2']).toBe('barpt');
+});
+
+it('merges published package translations into each lang .json', () => {
+    const langPath = __dirname + '/fixtures/lang/';
+    const files = generateFiles(langPath, prepareExtendedParsedLangFiles([langPath]));
+
+    expect(files.length).toBe(3);
+    expect(files[0].name).toBe('php_en.json');
+    expect(files[1].name).toBe('php_fr.json');
+    expect(files[2].name).toBe('php_pt.json');
+
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
+    expect(langEn['package-example::messages.welcome']).toBe('Welcome to the example package.');
+    expect(langEn['package-example::messages.foo.level1.level2']).toBe('package');
+    expect(langEn['package-example::messages.multiline']).toBe('Lorem ipsum dolor sit amet.');
+
+    const langFr = JSON.parse(fs.readFileSync(langPath + files[1].name).toString());
+    expect(langFr['package-example::messages.welcome']).toBeUndefined();
+    expect(langFr['package-example::messages.foo.level1.level2']).toBeUndefined();
+    expect(langFr['package-example::messages.multiline']).toBeUndefined();
+
+    const langPt = JSON.parse(fs.readFileSync(langPath + files[2].name).toString());
+    expect(langPt['package-example::messages.welcome']).toBe('Bem-vindo ao exemplo do pacote.');
+    expect(langPt['package-example::messages.foo.level1.level2']).toBe('pacote');
 });
 
 it('includes .php lang file in subdirectory in .json', () => {

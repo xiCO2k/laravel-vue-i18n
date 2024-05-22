@@ -155,8 +155,35 @@ export const readThroughDir = (dir) => {
   return data
 }
 
-export const prepareExtendedParsedLangFiles = (langPaths: string[]) =>
-  langPaths.reduce((acc, langPath) => [...acc, ...parseAll(langPath)], new Array<ParsedLangFileInterface>())
+export const prepareExtendedParsedLangFiles = (langPaths: string[]): ParsedLangFileInterface[] => {
+  const parsed: ParsedLangFileInterface[] = langPaths.flatMap(langPath => parseAll(langPath));
+
+  // If parsed contains a object with name 'php_vendor.json'
+  const vendorIndex: number = parsed.findIndex(({name}: ParsedLangFileInterface) => name === 'php_vendor.json');
+
+  if (vendorIndex !== -1) {
+    const vendor: ParsedLangFileInterface = parsed[vendorIndex];
+    parsed.splice(vendorIndex, 1);
+
+    parsed.forEach((file: ParsedLangFileInterface) => {
+      // Get the lang from the file name
+      const lang: string = file.name.replace(/^php_/, '').replace(/\.json$/, '');
+      // Filter the translations from the vendor file that match the current lang
+      const langTranslationsFromVendor: Record<string, string> = Object
+        .entries(vendor.translations)
+        .filter(([key]) => key.includes(`.${lang}.`))
+        .reduce((acc: Record<string, string>, [key, value]: [string, string]) => ({
+          ...acc,
+          [key.replace(`.${lang}.`, '::')]: value,
+        }), {});
+
+      // Merge the vendor translations that matched the lang with the current translations
+      file.translations = {...file.translations, ...langTranslationsFromVendor};
+    });
+  }
+
+  return parsed;
+};
 
 export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
   data = mergeData(data)

@@ -1,10 +1,14 @@
 import fs from 'fs';
 import { generateFiles, parseAll, parse, hasPhpTranslations, reset, prepareExtendedParsedLangFiles } from '../src/loader';
+import { isolateFolder, removeIsolatedFolder } from './folderIsolationUtil'
 
-beforeEach(() => reset(__dirname + '/fixtures/lang/'));
+const isolatedFixtures = isolateFolder(__dirname + '/fixtures', 'loader');
+afterAll(() => removeIsolatedFolder(isolatedFixtures));
+
+beforeEach(() => reset(isolatedFixtures + '/lang/'));
 
 it('creates a file for each lang', () => {
-    const langPath = __dirname + '/fixtures/lang/';
+    const langPath = isolatedFixtures + '/lang/';
     const files = generateFiles(langPath, parseAll(langPath));
 
     expect(files.length).toBe(3);
@@ -22,8 +26,32 @@ it('creates a file for each lang', () => {
     expect(langPt['auth.foo.level1.level2']).toBe('barpt');
 });
 
+it('merges published package translations into each lang .json', () => {
+    const langPath = isolatedFixtures + '/lang/';
+    const files = generateFiles(langPath, parseAll(langPath));
+
+    expect(files.length).toBe(3);
+    expect(files[0].name).toBe('php_en.json');
+    expect(files[1].name).toBe('php_fr.json');
+    expect(files[2].name).toBe('php_pt.json');
+
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
+    expect(langEn['package-example::messages.welcome']).toBe('Welcome to the example package.');
+    expect(langEn['package-example::messages.foo.level1.level2']).toBe('package');
+    expect(langEn['package-example::messages.multiline']).toBe('Lorem ipsum dolor sit amet.');
+
+    const langFr = JSON.parse(fs.readFileSync(langPath + files[1].name).toString());
+    expect(langFr['package-example::messages.welcome']).toBeUndefined();
+    expect(langFr['package-example::messages.foo.level1.level2']).toBeUndefined();
+    expect(langFr['package-example::messages.multiline']).toBeUndefined();
+
+    const langPt = JSON.parse(fs.readFileSync(langPath + files[2].name).toString());
+    expect(langPt['package-example::messages.welcome']).toBe('Bem-vindo ao exemplo do pacote.');
+    expect(langPt['package-example::messages.foo.level1.level2']).toBe('pacote');
+});
+
 it('includes .php lang file in subdirectory in .json', () => {
-    const langPath = __dirname + '/fixtures/lang/';
+    const langPath = isolatedFixtures + '/lang/';
     const files = generateFiles(langPath, parseAll(langPath));
     const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
 
@@ -33,7 +61,7 @@ it('includes .php lang file in subdirectory in .json', () => {
 });
 
 it('includes .php lang file in nested subdirectory in .json', () => {
-    const langPath = __dirname + '/fixtures/lang/';
+    const langPath = isolatedFixtures + '/lang/';
     const files = generateFiles(langPath, parseAll(langPath));
     const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString())
 
@@ -42,9 +70,9 @@ it('includes .php lang file in nested subdirectory in .json', () => {
 })
 
 it('inclues additional lang paths to load from', () => {
-    const langPath = __dirname + '/fixtures/lang/';
+    const langPath = isolatedFixtures + '/lang/';
     const additionalLangPaths = [
-        __dirname + '/fixtures/locales/'
+        isolatedFixtures + '/locales/'
     ];
 
     const langPaths = prepareExtendedParsedLangFiles([
@@ -60,9 +88,9 @@ it('inclues additional lang paths to load from', () => {
 });
 
 it('overwrites translations from additional lang paths', () => {
-    const langPath = __dirname + '/fixtures/lang/';
+    const langPath = isolatedFixtures + '/lang/';
     const additionalLangPaths = [
-        __dirname + '/fixtures/locales/'
+        isolatedFixtures + '/locales/'
     ];
 
     const langPaths = prepareExtendedParsedLangFiles([
@@ -79,33 +107,33 @@ it('overwrites translations from additional lang paths', () => {
 });
 
 it('transforms .php lang to .json', () => {
-    const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());
+    const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/auth.php').toString());
 
     expect(lang['failed']).toBe('These credentials do not match our records.');
 });
 
 it('transform nested .php lang files to .json', () => {
-    const langPt = parse(fs.readFileSync(__dirname + '/fixtures/lang/pt/auth.php').toString());
+    const langPt = parse(fs.readFileSync(isolatedFixtures + '/lang/pt/auth.php').toString());
     expect(langPt['foo.level1.level2']).toBe('barpt');
 
-    const langEn = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());
+    const langEn = parse(fs.readFileSync(isolatedFixtures + '/lang/en/auth.php').toString());
     expect(langEn['foo.level1.level2']).toBe('baren');
 });
 
 it('transforms simple index array to .json', () => {
-    const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/auth.php').toString());
+    const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/auth.php').toString());
     expect(lang['arr.0']).toBe('foo');
     expect(lang['arr.1']).toBe('bar');
 });
 
 it('ignores empty `array` or `null` translations', () => {
-    const lang = parse(fs.readFileSync(__dirname + '/fixtures/lang/en/ignore.php').toString());
+    const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/ignore.php').toString());
 
     expect(lang['empty_array']).toBe(undefined);
     expect(lang['null']).toBe(undefined);
 });
 
 it('checks if there is .php translations', () => {
-    expect(hasPhpTranslations(__dirname + '/fixtures/lang/')).toBe(true);
-    expect(hasPhpTranslations(__dirname + '/fixtures/wronglangfolder/')).toBe(false);
+    expect(hasPhpTranslations(isolatedFixtures + '/lang/')).toBe(true);
+    expect(hasPhpTranslations(isolatedFixtures + '/wronglangfolder/')).toBe(false);
 });

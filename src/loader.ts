@@ -50,6 +50,17 @@ export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
     })
   }
 
+  // If data contains an object with folder name 'vendor'
+  const vendorIndex = data.findIndex(({ folder }) => folder === 'vendor');
+
+  if (vendorIndex !== -1) {
+    const vendorTranslations = data[vendorIndex].translations;
+    data.splice(vendorIndex, 1);
+
+    data.forEach(langFile =>
+      langFile.translations = mergeVendorTranslations(langFile.folder, langFile.translations, vendorTranslations));
+  }
+
   return data
     .filter(({ translations }) => {
       return Object.keys(translations).length > 0
@@ -60,6 +71,20 @@ export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
         translations
       }
     })
+}
+
+function mergeVendorTranslations(folder: string, translations: any, vendorTranslations: any) {
+  // Filter the translations from the vendor file that match the current folder
+  const langTranslationsFromVendor = Object
+    .entries(vendorTranslations)
+    .filter(([key]) => key.includes(`.${folder}.`))
+    .reduce((acc, [key, value]) => ({
+      ...acc,
+      [key.replace(`.${folder}.`, '::')]: value,
+    }), {});
+
+  // Merge the vendor translations that matched the folder with the current translations
+  return { ...translations, ...langTranslationsFromVendor };
 }
 
 export const parse = (content: string) => {
@@ -155,8 +180,8 @@ export const readThroughDir = (dir) => {
   return data
 }
 
-export const prepareExtendedParsedLangFiles = (langPaths: string[]) =>
-  langPaths.reduce((acc, langPath) => [...acc, ...parseAll(langPath)], new Array<ParsedLangFileInterface>())
+export const prepareExtendedParsedLangFiles = (langPaths: string[]): ParsedLangFileInterface[] =>
+  langPaths.flatMap(langPath => parseAll(langPath));
 
 export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
   data = mergeData(data)

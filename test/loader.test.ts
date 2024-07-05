@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { generateFiles, parseAll, parse, hasPhpTranslations, reset, prepareExtendedParsedLangFiles } from '../src/loader';
+import { generateFiles, parseAll, parse, hasPhpTranslations, reset, prepareExtendedParsedLangFiles, getPackagesLangPaths } from '../src/loader'
 import { isolateFolder, removeIsolatedFolder } from './folderIsolationUtil'
 
 const isolatedFixtures = isolateFolder(__dirname + '/fixtures', 'loader');
@@ -104,6 +104,31 @@ it('overwrites translations from additional lang paths', () => {
 
     expect(langEn['auth.failed']).toBe('These credentials are incorrect.');
     expect(langEn['domain.user.sub_dir_support_is_amazing']).toBe('Subdirectory override is amazing');
+});
+
+it('includes vendor package translations into each lang .json', () => {
+    const langPath = isolatedFixtures + '/lang/';
+    const vendorPath = isolatedFixtures + '/vendor/';
+
+    const files = generateFiles(langPath,
+      prepareExtendedParsedLangFiles([langPath], getPackagesLangPaths(vendorPath))
+    );
+
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
+    expect(langEn['package-example::messages.error']).toBe('An error occurred while executing the task.');
+});
+
+it('overwrites vendor package translations into each lang .json', () => {
+    const langPath = isolatedFixtures + '/lang/';
+    const vendorPath = isolatedFixtures + '/vendor/';
+
+    const files = generateFiles(langPath,
+      prepareExtendedParsedLangFiles([langPath], getPackagesLangPaths(vendorPath))
+    );
+
+    const langEn = JSON.parse(fs.readFileSync(langPath + files[0].name).toString());
+    expect(langEn['package-example::messages.success']).toBe('The package did the task successfully.');
+    expect(langEn['package-example::messages.overwrite_example']).toBe('This is the message being overwritten.');
 });
 
 it('transforms .php lang to .json', () => {

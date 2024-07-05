@@ -1,6 +1,6 @@
 import path from 'path'
 import { existsSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
-import { hasPhpTranslations, generateFiles, prepareExtendedParsedLangFiles } from './loader'
+import { hasPhpTranslations, generateFiles, prepareExtendedParsedLangFiles, getPackagesLangPaths } from './loader'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 import { VitePluginOptionsInterface } from './interfaces/plugin-options'
 import { Plugin } from 'vite'
@@ -10,6 +10,7 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
   langPath = langPath.replace(/[\\/]$/, '') + path.sep
 
   const additionalLangPaths = typeof options === 'string' ? [] : options.additionalLangPaths ?? []
+  const loadPackagesLangPaths = typeof options === 'string' ? false : options.loadPackagesLangPaths ?? false
 
   const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)
   let files: ParsedLangFileInterface[] = []
@@ -49,13 +50,15 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
         return
       }
 
-      const langPaths = prepareExtendedParsedLangFiles([frameworkLangPath, langPath, ...additionalLangPaths])
+      const packagesLangPaths = loadPackagesLangPaths ? getPackagesLangPaths() : null;
+      const langPaths = prepareExtendedParsedLangFiles([frameworkLangPath, langPath, ...additionalLangPaths], packagesLangPaths)
 
       files = generateFiles(langPath, langPaths)
     },
     handleHotUpdate(ctx) {
       if (/lang\/.*\.php$/.test(ctx.file)) {
-        const langPaths = prepareExtendedParsedLangFiles([frameworkLangPath, langPath, ...additionalLangPaths])
+        const packagesLangPaths = loadPackagesLangPaths ? getPackagesLangPaths() : null;
+        const langPaths = prepareExtendedParsedLangFiles([frameworkLangPath, langPath, ...additionalLangPaths], packagesLangPaths)
 
         files = generateFiles(langPath, langPaths)
       }

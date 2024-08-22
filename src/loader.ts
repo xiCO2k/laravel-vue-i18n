@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs, { existsSync, readdirSync } from 'fs'
 import path from 'path'
 import { Engine } from 'php-parser'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
@@ -85,6 +85,14 @@ function mergeVendorTranslations(folder: string, translations: any, vendorTransl
 
   // Merge the vendor translations that matched the folder with the current translations
   return { ...translations, ...langTranslationsFromVendor };
+}
+
+export const parsePackage = (langPath: string, packageName: string) => {
+  return parseAll(langPath).map(langFile => {
+    const reducedTranslations = Object.entries(langFile.translations)
+      .reduce((acc, [key, value]) => ({...acc, [`${packageName}::${key}`]: value}), {});
+    return {...langFile, translations: reducedTranslations};
+  });
 }
 
 export const parse = (content: string) => {
@@ -180,8 +188,11 @@ export const readThroughDir = (dir) => {
   return data
 }
 
-export const prepareExtendedParsedLangFiles = (langPaths: string[]): ParsedLangFileInterface[] =>
-  langPaths.flatMap(langPath => parseAll(langPath));
+export const prepareExtendedParsedLangFiles = (langPaths: string[], packages?: Package[]): ParsedLangFileInterface[] =>
+  [
+    ...(packages || []).flatMap(pkg => parsePackage(pkg.langPath, pkg.name)),
+    ...langPaths.flatMap(langPath => parseAll(langPath)),
+  ];
 
 export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
   data = mergeData(data)
@@ -196,6 +207,26 @@ export const generateFiles = (langPath: string, data: ParsedLangFileInterface[])
 
   return data
 }
+
+export const getPackagesLangPaths = (vendorFolder = 'vendor'): Package[] => {
+  const vendors = readdirSync(vendorFolder, {withFileTypes: true}).filter(dir => dir.isDirectory());
+
+  return vendors.flatMap(vendor => {
+    const packages = readdirSync(`${vendorFolder}/${vendor.name}`, {withFileTypes: true}).filter(dir => dir.isDirectory());
+
+    return packages.map(pkg => {
+      const pkgPath = `${vendorFolder}/${vendor.name}/${pkg.name}`;
+
+      if (existsSync(`${pkgPath}/resources/lang`)) {
+        return {name: pkg.name, langPath: `${pkgPath}/resources/lang`};
+      } else if (existsSync(`${pkgPath}/lang`)) {
+        return {name: pkg.name, langPath: `${pkgPath}/lang`};
+      }
+
+      return null;
+    }).filter(Boolean);
+  });
+};
 
 function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
   const obj = {}

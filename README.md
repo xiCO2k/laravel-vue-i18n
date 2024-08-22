@@ -106,10 +106,13 @@ export default defineConfig({
 
         i18n({
             // you can also change your langPath here
-            // langPath: 'locales' 
+            // langPath: 'locales', 
             additionalLangPaths: [
                 'public/locales' // Load translations from this path too! 
-            ]
+            ],
+            // if you want to load extra packages lang files, you can set this to true
+            // it will load them just as laravel does: PackageName::messages.example
+            loadPackagesLangPaths: true // Load all packages lang files, default is false
         }),
     ],
 });

@@ -215,9 +215,15 @@ export const getPackagesLangPaths = (vendorFolder = 'vendor'): Package[] => {
     const packages = readdirSync(`${vendorFolder}/${vendor.name}`, {withFileTypes: true}).filter(dir => dir.isDirectory());
 
     return packages.map(pkg => {
-      const langPath = `${vendorFolder}/${vendor.name}/${pkg.name}/lang`;
+      const pkgPath = `${vendorFolder}/${vendor.name}/${pkg.name}`;
 
-      return existsSync(langPath) ? {name: pkg.name, langPath: langPath} : null;
+      if (existsSync(`${pkgPath}/resources/lang`)) {
+        return {name: pkg.name, langPath: `${pkgPath}/resources/lang`};
+      } else if (existsSync(`${pkgPath}/lang`)) {
+        return {name: pkg.name, langPath: `${pkgPath}/lang`};
+      }
+
+      return null;
     }).filter(Boolean);
   });
 };

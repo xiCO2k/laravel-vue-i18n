@@ -3,7 +3,13 @@ import path from 'path'
 import { Engine } from 'php-parser'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 
-const toCamelCase = (str: string): string => str.replace(/^\w/, (c) => c.toLowerCase())
+const toCamelCase = (str: string): string => {
+  if (str === str.toUpperCase()) {
+    return str.toLowerCase()
+  }
+
+  return str.replace(/^\w/, (c) => c.toLowerCase())
+}
 
 export const hasPhpTranslations = (folderPath: string): boolean => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
@@ -130,10 +136,12 @@ const parseItem = (expr) => {
     let key = expr.key.value
 
     if (expr.key.kind === 'staticlookup') {
-      key = toCamelCase(expr.key.what.name)
-    }
-
-    if (expr.key.kind === 'propertylookup') {
+      if (expr.key.offset.name === 'class') {
+        key = toCamelCase(expr.key.what.name)
+      } else {
+        key = toCamelCase(expr.key.offset.name)
+      }
+    } else if (expr.key.kind === 'propertylookup') {
       key = toCamelCase(expr.key.what.offset.name)
     }
 

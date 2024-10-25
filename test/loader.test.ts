@@ -134,6 +134,13 @@ it('transforms enum values to .json', () => {
     expect(lang['status.finished']).toBe('Finished');
 });
 
+it('transforms class names and consts to .json', () => {
+    const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/classnames.php').toString());
+
+    expect(lang['someClass']).toBe('Some Class');
+    expect(lang['name']).toBe('Name');
+});
+
 it('ignores empty `array` or `null` translations', () => {
     const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/ignore.php').toString());
 

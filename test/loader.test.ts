@@ -126,6 +126,14 @@ it('transforms simple index array to .json', () => {
     expect(lang['arr.1']).toBe('bar');
 });
 
+it('transforms enum values to .json', () => {
+    const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/enums.php').toString());
+
+    expect(lang['status.new']).toBe('New');
+    expect(lang['status.inProgress']).toBe('In Progress');
+    expect(lang['status.finished']).toBe('Finished');
+});
+
 it('ignores empty `array` or `null` translations', () => {
     const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/ignore.php').toString());
 

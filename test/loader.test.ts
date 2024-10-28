@@ -126,6 +126,21 @@ it('transforms simple index array to .json', () => {
     expect(lang['arr.1']).toBe('bar');
 });
 
+it('transforms enum values to .json', () => {
+    const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/enums.php').toString());
+
+    expect(lang['status.new']).toBe('New');
+    expect(lang['status.inProgress']).toBe('In Progress');
+    expect(lang['status.finished']).toBe('Finished');
+});
+
+it('transforms class names and consts to .json', () => {
+    const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/classnames.php').toString());
+
+    expect(lang['someClass']).toBe('Some Class');
+    expect(lang['name']).toBe('Name');
+});
+
 it('ignores empty `array` or `null` translations', () => {
     const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/ignore.php').toString());
 

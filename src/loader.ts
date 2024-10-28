@@ -3,6 +3,14 @@ import path from 'path'
 import { Engine } from 'php-parser'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
 
+const toCamelCase = (str: string): string => {
+  if (str === str.toUpperCase()) {
+    return str.toLowerCase()
+  }
+
+  return str.replace(/^\w/, (c) => c.toLowerCase())
+}
+
 export const hasPhpTranslations = (folderPath: string): boolean => {
   folderPath = folderPath.replace(/[\\/]$/, '') + path.sep
 
@@ -51,14 +59,16 @@ export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
   }
 
   // If data contains an object with folder name 'vendor'
-  const vendorIndex = data.findIndex(({ folder }) => folder === 'vendor');
+  const vendorIndex = data.findIndex(({ folder }) => folder === 'vendor')
 
   if (vendorIndex !== -1) {
-    const vendorTranslations = data[vendorIndex].translations;
-    data.splice(vendorIndex, 1);
+    const vendorTranslations = data[vendorIndex].translations
+    data.splice(vendorIndex, 1)
 
-    data.forEach(langFile =>
-      langFile.translations = mergeVendorTranslations(langFile.folder, langFile.translations, vendorTranslations));
+    data.forEach(
+      (langFile) =>
+        (langFile.translations = mergeVendorTranslations(langFile.folder, langFile.translations, vendorTranslations))
+    )
   }
 
   return data
@@ -75,16 +85,18 @@ export const parseAll = (folderPath: string): ParsedLangFileInterface[] => {
 
 function mergeVendorTranslations(folder: string, translations: any, vendorTranslations: any) {
   // Filter the translations from the vendor file that match the current folder
-  const langTranslationsFromVendor = Object
-    .entries(vendorTranslations)
+  const langTranslationsFromVendor = Object.entries(vendorTranslations)
     .filter(([key]) => key.includes(`.${folder}.`))
-    .reduce((acc, [key, value]) => ({
-      ...acc,
-      [key.replace(`.${folder}.`, '::')]: value,
-    }), {});
+    .reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key.replace(`.${folder}.`, '::')]: value
+      }),
+      {}
+    )
 
   // Merge the vendor translations that matched the folder with the current translations
-  return { ...translations, ...langTranslationsFromVendor };
+  return { ...translations, ...langTranslationsFromVendor }
 }
 
 export const parse = (content: string) => {
@@ -121,7 +133,19 @@ const parseItem = (expr) => {
   }
 
   if (expr.key) {
-    return { [expr.key.value]: parseItem(expr.value) }
+    let key = expr.key.value
+
+    if (expr.key.kind === 'staticlookup') {
+      if (expr.key.offset.name === 'class') {
+        key = toCamelCase(expr.key.what.name)
+      } else {
+        key = toCamelCase(expr.key.offset.name)
+      }
+    } else if (expr.key.kind === 'propertylookup') {
+      key = toCamelCase(expr.key.what.offset.name)
+    }
+
+    return { [key]: parseItem(expr.value) }
   }
 
   return parseItem(expr.value)
@@ -181,7 +205,7 @@ export const readThroughDir = (dir) => {
 }
 
 export const prepareExtendedParsedLangFiles = (langPaths: string[]): ParsedLangFileInterface[] =>
-  langPaths.flatMap(langPath => parseAll(langPath));
+  langPaths.flatMap((langPath) => parseAll(langPath))
 
 export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
   data = mergeData(data)

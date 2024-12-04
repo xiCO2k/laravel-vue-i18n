@@ -30,6 +30,8 @@ yarn add laravel-vue-i18n
 
 > If you want to see a screencast on how to setup check out this video: [How to use Laravel Vue i18n plugin](https://www.youtube.com/watch?v=ONRo8-i5Qsk).
 
+> You can also check out this repository for an example implementation in a Laravel Inertia Vue project: [example-repo](https://github.com/abdessamadbettal/laravel-starter).
+
 ### With Vite
 
 ```js

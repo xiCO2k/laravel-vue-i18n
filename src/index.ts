@@ -440,22 +440,48 @@ export class I18n {
   /**
    * Find translation in memory.
    */
-  findTranslation(key) {
+  findTranslation(key: string): any {
     if (this.isValid(this.activeMessages[key])) {
       return this.activeMessages[key]
     }
 
-    const hasChildItems = this.activeMessages[`${key}.0`] !== undefined
-
-    if (hasChildItems) {
-      const childItems = Object.entries(this.activeMessages)
-        .filter((item) => item[0].startsWith(`${key}.`))
-        .map((item) => item[1])
-
-      return reactive(childItems)
+    if (this.hasChildItems(key)) {
+      return this.getChildItems(key)
     }
 
-    return this.activeMessages[key]
+    const nestedValue = this.getNestedValue(this.activeMessages, key)
+    if (this.isValid(nestedValue)) {
+      return nestedValue
+    }
+
+    return null
+  }
+
+  /**
+   * Checks if the key has child items (e.g., `key.0`, `key.1`, etc.).
+   */
+  hasChildItems(key: string): boolean {
+    return this.isValid(this.activeMessages[`${key}.0`])
+  }
+
+  /**
+   * Retrieves all child items for a given key (e.g., `key.0`, `key.1`, etc.).
+   */
+  getChildItems(key: string): any {
+    return reactive(
+      Object.entries(this.activeMessages)
+        .filter(([k]) => k.startsWith(`${key}.`)) // Filter keys starting with the given key
+        .map(([, value]) => value) // Extract the values
+    )
+  }
+
+  /**
+   * Recursively resolves nested keys in an object using dot notation.
+   */
+  getNestedValue(obj: any, key: string): any {
+    return key.split('.').reduce((nestedObj, keyPart) => {
+      return nestedObj && this.isValid(nestedObj[keyPart]) ? nestedObj[keyPart] : null
+    }, obj)
   }
 
   /**

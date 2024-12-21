@@ -278,3 +278,15 @@ it('checks if watching wTrans works if key does not exist', async () => {
 
   expect(translated.value).toBe('Not existing translation');
 })
+
+it('translates nested keys with $t mixin', async () => {
+    const wrapper = await global.mountPlugin(`<h1>{{ $t('login.email') }}</h1>`, 'en');
+
+    expect(wrapper.html()).toBe('<h1>Email</h1>')
+})
+
+it('translates nested keys and replaces values with $t mixin', async () => {
+    const wrapper = await global.mountPlugin(`<h1>{{ $t('login.welcome', { name: 'Francisco' }) }}</h1>`, 'en');
+
+    expect(wrapper.html()).toBe('<h1>Welcome, Francisco!</h1>')
+})

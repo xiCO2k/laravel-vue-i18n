@@ -11,7 +11,7 @@
     "vue3",
     "inertiajs"
   ],
-  "repository": "https://github.com/xico2k/laravel-vue-i18n",
+  "repository": "https://github.com/bishwajitcadhikary/laravel-vue-i18n",
   "license": "MIT",
   "description": "allows to connect your `Laravel` Framework localization files with `Vue`.",
   "main": "dist/index.cjs",

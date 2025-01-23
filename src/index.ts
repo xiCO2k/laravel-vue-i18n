@@ -101,7 +101,7 @@ export const trans_choice = transChoice
 /**
  * Type declarations for `$t` and `$tChoice` mixins.
  */
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties {
     $t: typeof trans
     $tChoice: typeof transChoice

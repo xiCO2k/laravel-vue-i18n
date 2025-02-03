@@ -11,7 +11,8 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
 
   const additionalLangPaths = typeof options === 'string' ? [] : options.additionalLangPaths ?? []
 
-  const frameworkLangPath = 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)
+  const excludeFrameworkTranslations = typeof options === 'string' ? options === 'lang' : options.excludeFrameworkTranslations ?? true
+  const frameworkLangPath = excludeFrameworkTranslations ? '' : 'vendor/laravel/framework/src/Illuminate/Translation/lang/'.replace('/', path.sep)
   let files: ParsedLangFileInterface[] = []
   let exitHandlersBound: boolean = false
 

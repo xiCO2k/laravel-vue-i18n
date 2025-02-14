@@ -1,4 +1,4 @@
-import { reactive, Plugin, computed, ComputedRef, watchEffect, ref, Ref } from 'vue'
+import { reactive, Plugin, computed, ComputedRef, watchEffect, ref, ComputedRef } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { PluginOptionsInterface } from './interfaces/plugin-options'
 import { LanguageInterface } from './interfaces/language'
@@ -404,8 +404,8 @@ export class I18n {
   /**
    * Returns the reactive current active language
    */
-  getCurrentLanguage(): Ref<string> {
-    return this.currentLanguage
+  getCurrentLanguage(): ComputedRef<string> {
+    return computed(() => this.currentLanguage.value)
   }
 
   /**

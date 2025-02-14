@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans, I18n } from '../src'
+import { i18nVue, trans, trans_choice, loadLanguageAsync, reset, getActiveLanguage, isLoaded, wTrans, I18n, currentLocale } from '../src'
 import { reset as resetLoader } from '../src/loader'
 
 beforeEach(() => reset());
@@ -278,3 +278,15 @@ it('checks if watching wTrans works if key does not exist', async () => {
 
   expect(translated.value).toBe('Not existing translation');
 })
+
+it('get current reactive locale with "currentLocale"', async () => {
+    await global.mountPlugin();
+
+    expect(currentLocale.value)
+      .toBe('pt')
+
+    await loadLanguageAsync('en');
+
+    expect(currentLocale.value)
+        .toBe('en')
+  })

@@ -1,4 +1,4 @@
-import { reactive, Plugin, computed, ComputedRef, watchEffect } from 'vue'
+import { reactive, Plugin, computed, ComputedRef, watchEffect, ref, ComputedRef } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { PluginOptionsInterface } from './interfaces/plugin-options'
 import { LanguageInterface } from './interfaces/language'
@@ -25,6 +25,17 @@ const DEFAULT_OPTIONS: OptionsInterface = {
   resolve: (lang: string) => new Promise((resolve) => resolve({ default: {} })),
   onLoad: (lang: string) => {}
 }
+
+/**
+ * A computed property that reflects the current reactive language.
+ *
+ * This value is derived from the shared I18n instance. When the language
+ * is updated via the I18n API, this computed value will automatically reflect
+ * the new language.
+ */
+export const currentLocale: ComputedRef<string> = computed(() => {
+    return I18n.getSharedInstance().getCurrentLanguage().value
+})
 
 /**
  * The default options, for the plugin.
@@ -136,6 +147,9 @@ export class I18n {
 
   // Stores options for the current instance
   private options: OptionsInterface
+
+  // Stores a reactive reference to the current active language
+  private currentLanguage = ref<string>(DEFAULT_OPTIONS.lang || DEFAULT_OPTIONS.fallbackLang)
 
   // Stores messages for the currently active language
   private activeMessages: object = reactive({})
@@ -358,6 +372,7 @@ export class I18n {
     }
 
     this.options.lang = lang
+    this.currentLanguage.value = lang
 
     for (const [key, value] of Object.entries(messages)) {
       this.activeMessages[key] = value
@@ -384,6 +399,13 @@ export class I18n {
    */
   getActiveLanguage(): string {
     return this.options.lang || this.options.fallbackLang
+  }
+
+  /**
+   * Returns the reactive current active language
+   */
+  getCurrentLanguage(): ComputedRef<string> {
+    return computed(() => this.currentLanguage.value)
   }
 
   /**

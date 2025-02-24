@@ -3,7 +3,7 @@ import { OptionsInterface } from './interfaces/options'
 import { PluginOptionsInterface } from './interfaces/plugin-options'
 import { LanguageInterface } from './interfaces/language'
 import { LanguageJsonFileInterface } from './interfaces/language-json-file'
-import { ReplacementsInterface } from './interfaces/replacements'
+import { Replacements } from './interfaces/replacements'
 import { choose } from './pluralization'
 import { avoidExceptionOnPromise, avoidException } from './utils/avoid-exceptions'
 import { hasPhpTranslations } from './utils/has-php-translations'
@@ -50,32 +50,28 @@ export function loadLanguageAsync(lang: string, dashLangTry = false): Promise<st
 /**
  * Get the translation for the given key.
  */
-export function trans(key: string, replacements: ReplacementsInterface = {}): string {
+export function trans(key: string, replacements: Replacements = {}): string {
   return I18n.getSharedInstance().trans(key, replacements)
 }
 
 /**
  * Get the translation for the given key and watch for any changes.
  */
-export function wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
+export function wTrans(key: string, replacements: Replacements = {}): ComputedRef<string> {
   return I18n.getSharedInstance().wTrans(key, replacements)
 }
 
 /**
  * Translates the given message based on a count.
  */
-export function transChoice(key: string, number: number, replacements: ReplacementsInterface = {}): string {
+export function transChoice(key: string, number: number, replacements: Replacements = {}): string {
   return I18n.getSharedInstance().transChoice(key, number, replacements)
 }
 
 /**
  * Translates the given message based on a count and watch for changes.
  */
-export function wTransChoice(
-  key: string,
-  number: number,
-  replacements: ReplacementsInterface = {}
-): ComputedRef<string> {
+export function wTransChoice(key: string, number: number, replacements: Replacements = {}): ComputedRef<string> {
   return I18n.getSharedInstance().wTransChoice(key, number, replacements)
 }
 
@@ -117,8 +113,8 @@ export const i18nVue: Plugin = {
 
     const i18n = options.shared ? I18n.getSharedInstance(options, true) : new I18n(options)
 
-    app.config.globalProperties.$t = (key: string, replacements: ReplacementsInterface) => i18n.trans(key, replacements)
-    app.config.globalProperties.$tChoice = (key: string, number: number, replacements: ReplacementsInterface) =>
+    app.config.globalProperties.$t = (key: string, replacements: Replacements) => i18n.trans(key, replacements)
+    app.config.globalProperties.$tChoice = (key: string, number: number, replacements: Replacements) =>
       i18n.transChoice(key, number, replacements)
 
     app.provide('i18n', i18n)
@@ -398,14 +394,14 @@ export class I18n {
   /**
    * Get the translation for the given key.
    */
-  trans(key: string, replacements: ReplacementsInterface = {}): string {
+  trans(key: string, replacements: Replacements = {}): string {
     return this.wTrans(key, replacements).value
   }
 
   /**
    * Get the translation for the given key and watch for any changes.
    */
-  wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
+  wTrans(key: string, replacements: Replacements = {}): ComputedRef<string> {
     watchEffect(() => {
       let value = this.findTranslation(key)
 
@@ -422,17 +418,15 @@ export class I18n {
   /**
    * Translates the given message based on a count.
    */
-  transChoice(key: string, number: number, replacements: ReplacementsInterface = {}): string {
+  transChoice(key: string, number: number, replacements: Replacements = {}): string {
     return this.wTransChoice(key, number, replacements).value
   }
 
   /**
    * Translates the given message based on a count and watch for changes.
    */
-  wTransChoice(key: string, number: number, replacements: ReplacementsInterface = {}): ComputedRef<string> {
+  wTransChoice(key: string, number: number, replacements: Replacements = {}): ComputedRef<string> {
     const message = this.wTrans(key, replacements)
-
-    replacements.count = number.toString()
 
     return computed(() => this.makeReplacements(choose(message.value, number, this.options.lang), replacements))
   }
@@ -461,7 +455,7 @@ export class I18n {
   /**
    * Make the place-holder replacements on a line.
    */
-  makeReplacements(message?: string, replacements?: ReplacementsInterface): string {
+  makeReplacements(message?: string, replacements?: Replacements): string {
     const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
     Object.entries(replacements || [])

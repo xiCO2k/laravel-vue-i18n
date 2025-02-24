@@ -428,6 +428,9 @@ export class I18n {
   wTransChoice(key: string, number: number, replacements: Replacements = {}): ComputedRef<string> {
     const message = this.wTrans(key, replacements)
 
+    // @ts-expect-error technically arrays can have properties we well but ts doesnt like that
+    replacements.count = number.toString()
+
     return computed(() => this.makeReplacements(choose(message.value, number, this.options.lang), replacements))
   }
 

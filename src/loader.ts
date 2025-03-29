@@ -2,6 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import { Engine } from 'php-parser'
 import { ParsedLangFileInterface } from './interfaces/parsed-lang-file'
+import { TranslationValue } from './interfaces/translation'
+import { PhpAstNode } from './interfaces/php-ast-node'
 
 const toCamelCase = (str: string): string => {
   if (str === str.toUpperCase()) {
@@ -21,8 +23,6 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
       .sort()
 
     for (const folder of folders) {
-      const lang = {}
-
       const files = fs.readdirSync(folderPath + path.sep + folder).filter((file) => /\.php$/.test(file))
 
       if (files.length > 0) {
@@ -99,7 +99,7 @@ function mergeVendorTranslations(folder: string, translations: any, vendorTransl
   return { ...translations, ...langTranslationsFromVendor }
 }
 
-export const parse = (content: string) => {
+export const parse = (content: string): Record<string, string> => {
   const arr = new Engine({}).parseCode(content, 'lang').children.filter((child) => child.kind === 'return')[0] as any
 
   if (arr?.expr?.kind !== 'array') {
@@ -109,9 +109,9 @@ export const parse = (content: string) => {
   return convertToDotsSyntax(parseItem(arr.expr))
 }
 
-const parseItem = (expr) => {
+const parseItem = (expr: PhpAstNode): TranslationValue => {
   if (expr.kind === 'string') {
-    return expr.value
+    return expr.value as string || ''
   }
 
   if (expr.kind === 'nullkeyword') {
@@ -119,41 +119,60 @@ const parseItem = (expr) => {
   }
 
   if (expr.kind === 'array') {
-    let items = expr.items.map((item) => parseItem(item))
+    if (!expr.items) return {}
+
+    const parsedItems = expr.items.map((item) => parseItem(item))
 
     if (expr.items.every((item) => item.key !== null)) {
-      items = items.reduce((acc, val) => Object.assign({}, acc, val), {})
-    }
+      return parsedItems.reduce<Record<string, TranslationValue>>(
+        (acc, val) => {
+          const valAsRecord = val as Record<string, TranslationValue>;
 
-    return items
+          return { ...acc, ...valAsRecord };
+        },
+        {}
+      );
+    } else {
+      const indexedResult: Record<string, TranslationValue> = {};
+
+      parsedItems.forEach((item, index) => {
+        indexedResult[index.toString()] = item as TranslationValue;
+      });
+
+      return indexedResult;
+    }
   }
 
   if (expr.kind === 'bin') {
-    return parseItem(expr.left) + parseItem(expr.right)
+    if (!expr.left || !expr.right) return ''
+    return (parseItem(expr.left) as string) + (parseItem(expr.right) as string)
   }
 
   if (expr.key) {
     let key = expr.key.value
 
     if (expr.key.kind === 'staticlookup') {
-      if (expr.key.offset.name === 'class') {
-        key = toCamelCase(expr.key.what.name)
+      if (expr.key.offset?.name === 'class') {
+        key = toCamelCase(expr.key.what?.name || '')
       } else {
-        key = toCamelCase(expr.key.offset.name)
+        key = toCamelCase(expr.key.offset?.name || '')
       }
     } else if (expr.key.kind === 'propertylookup') {
-      key = toCamelCase(expr.key.what.offset.name)
+      key = toCamelCase(expr.key.what?.offset?.name || '')
     }
 
-    return { [key]: parseItem(expr.value) }
+    if (!expr.value) return { [key]: '' }
+    return { [key]: parseItem(expr.value as PhpAstNode) } as TranslationValue
   }
 
-  return parseItem(expr.value)
+  if (!expr.value) return {}
+  return parseItem(expr.value as PhpAstNode) || {}
 }
 
-const convertToDotsSyntax = (list) => {
-  const flatten = (items, context = '') => {
-    const data = {}
+
+const convertToDotsSyntax = (list: TranslationValue | TranslationValue[]): Record<string, string> => {
+  const flatten = (items: TranslationValue | TranslationValue[], context = '') => {
+    const data: Record<string, string> = {}
 
     if (items === null) {
       return data
@@ -176,7 +195,7 @@ const convertToDotsSyntax = (list) => {
   return flatten(list)
 }
 
-export const reset = (folderPath) => {
+export const reset = (folderPath: string) => {
   const dir = fs.readdirSync(folderPath)
 
   dir
@@ -186,18 +205,18 @@ export const reset = (folderPath) => {
     })
 }
 
-export const readThroughDir = (dir) => {
-  const data = {}
+export const readThroughDir = (dir: string): TranslationValue => {
+  const data: TranslationValue = {}
 
   fs.readdirSync(dir).forEach((file) => {
     const absoluteFile = dir + path.sep + file
 
     if (fs.statSync(absoluteFile).isDirectory()) {
-      const subFolderFileKey = file.replace(/\.\w+$/, '')
+      const subFolderFileKey = file.replace(/\.\w+$/, "");
 
-      data[subFolderFileKey] = readThroughDir(absoluteFile)
+      data[subFolderFileKey] = readThroughDir(absoluteFile);
     } else {
-      data[file.replace(/\.\w+$/, '')] = parse(fs.readFileSync(absoluteFile).toString())
+      data[file.replace(/\.\w+$/, "")] = parse(fs.readFileSync(absoluteFile).toString());
     }
   })
 
@@ -207,8 +226,29 @@ export const readThroughDir = (dir) => {
 export const prepareExtendedParsedLangFiles = (langPaths: string[]): ParsedLangFileInterface[] =>
   langPaths.flatMap((langPath) => parseAll(langPath))
 
-export const generateFiles = (langPath: string, data: ParsedLangFileInterface[]): ParsedLangFileInterface[] => {
+export const generateFiles = (langPath: string, data: ParsedLangFileInterface[], usedKeys: Set<string> | null = null): ParsedLangFileInterface[] => {
   data = mergeData(data)
+
+  if (usedKeys) {
+    const exactKeys = new Set<string>();
+    const prefixes: string[] = [];
+    usedKeys.forEach(key => {
+      if (key.endsWith('*')) {
+        prefixes.push(key.slice(0, -1));
+      } else {
+        exactKeys.add(key);
+      }
+    });
+
+    data = data.map(langFile => ({
+      ...langFile,
+      translations: Object.fromEntries(
+        Object.entries(langFile.translations).filter(([key]) =>
+          exactKeys.has(key) || prefixes.some(prefix => key.startsWith(prefix))
+        )
+      )
+    }));
+  }
 
   if (!fs.existsSync(langPath)) {
     fs.mkdirSync(langPath)
@@ -222,7 +262,7 @@ export const generateFiles = (langPath: string, data: ParsedLangFileInterface[])
 }
 
 function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
-  const obj = {}
+  const obj: Record<string, Record<string, string>> = {}
 
   data.forEach(({ name, translations }) => {
     if (!obj[name]) {
@@ -232,7 +272,7 @@ function mergeData(data: ParsedLangFileInterface[]): ParsedLangFileInterface[] {
     obj[name] = { ...obj[name], ...translations }
   })
 
-  const arr = []
+  const arr: ParsedLangFileInterface[] = []
   Object.entries(obj).forEach(([name, translations]) => {
     arr.push({ name, translations })
   })

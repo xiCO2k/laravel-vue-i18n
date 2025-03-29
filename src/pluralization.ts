@@ -40,7 +40,8 @@ function extract(segments: string[], number: number): string | null {
  * Get the translation string if the condition matches.
  */
 function extractFromString(part: string, number: number): string | null {
-  const matches = part.match(/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s) || []
+  const matches = part.match(/^[\{\[]([^\[\]\{\}]*)[\}\]]([\s\S]*)/) || []
+
   if (matches.length !== 3) {
     return null
   }

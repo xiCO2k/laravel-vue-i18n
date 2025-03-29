@@ -34,7 +34,7 @@ const DEFAULT_OPTIONS: OptionsInterface = {
  * the new language.
  */
 export const currentLocale: ComputedRef<string> = computed(() => {
-    return I18n.getSharedInstance().getCurrentLanguage().value
+  return I18n.getSharedInstance().getCurrentLanguage().value
 })
 
 /**

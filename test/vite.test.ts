@@ -43,3 +43,31 @@ describe('Translation keys tree shaking', () => {
     });
   });
 });
+
+describe('Vite plugin options', () => {
+  it('should apply tree shaking when treeShake option is true', () => {
+    const allTranslations = {
+      'used.key': 'Used value',
+      'unused.key': 'Unused value'
+    };
+
+    const usedKeys = new Set(['used.key']);
+
+    const result = generateFiles('lang', [{ name: 'en', translations: allTranslations }], usedKeys);
+
+    expect(result[0].translations['unused.key']).toBeUndefined();
+    expect(result[0].translations['used.key']).toBe('Used value');
+  });
+
+  it('should not apply tree shaking when treeShake option is false', () => {
+    const allTranslations = {
+      'used.key': 'Used value',
+      'unused.key': 'Unused value'
+    };
+
+    const result = generateFiles('lang', [{ name: 'en', translations: allTranslations }], null);
+
+    expect(result[0].translations['unused.key']).toBe('Unused value');
+    expect(result[0].translations['used.key']).toBe('Used value');
+  });
+});

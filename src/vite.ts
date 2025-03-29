@@ -143,48 +143,52 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
       const vueFiles = fg.sync('**/*.vue', { cwd: './resources/js/', absolute: true })
       usedKeys = new Set<string>()
 
-      for (const file of vueFiles) {
-        const content = readFileSync(file, 'utf8')
-        const { descriptor } = parse(content, { sourceMap: false })
+      if (typeof options !== 'string' && options.treeShake) {
+        for (const file of vueFiles) {
+          const content = readFileSync(file, 'utf8')
+          const { descriptor } = parse(content, { sourceMap: false })
 
-        if (descriptor.script) {
-          const scriptAst = acorn.parse(descriptor.script.content, {
-            ecmaVersion: 'latest',
-            sourceType: 'module'
-          })
-          const scriptKeys = extractKeys(scriptAst, ['trans', 'wTrans', 'transChoice', 'wTransChoice'])
-          scriptKeys.forEach(key => usedKeys!.add(key))
-        }
-
-        if (descriptor.scriptSetup) {
-          let scriptSetupContent = descriptor.scriptSetup.content
-          if (descriptor.scriptSetup.lang === 'ts') {
-            const transpiled = ts.transpileModule(scriptSetupContent, { compilerOptions: { module: ts.ModuleKind.ESNext } })
-            scriptSetupContent = transpiled.outputText
+          if (descriptor.script) {
+            const scriptAst = acorn.parse(descriptor.script.content, {
+              ecmaVersion: 'latest',
+              sourceType: 'module'
+            })
+            const scriptKeys = extractKeys(scriptAst, ['trans', 'wTrans', 'transChoice', 'wTransChoice'])
+            scriptKeys.forEach(key => usedKeys!.add(key))
           }
-          const scriptSetupAst = acorn.parse(scriptSetupContent, {
-            ecmaVersion: 'latest',
-            sourceType: 'module'
-          })
-          const scriptSetupKeys = extractKeys(scriptSetupAst, ['trans', 'wTrans', 'transChoice', 'wTransChoice'])
-          scriptSetupKeys.forEach(key => usedKeys!.add(key))
-        }
 
-        if (descriptor.template) {
-          const templateAst = descriptor.template.ast
-          if (templateAst) {
-            const expressions = collectTemplateExpressions(templateAst)
-            for (const expr of expressions) {
-              try {
-                const exprAst = acorn.parseExpressionAt(expr, 0, { ecmaVersion: 'latest' })
-                const exprKeys = extractKeys(exprAst, ['$t', '$tChoice'])
-                exprKeys.forEach(key => usedKeys!.add(key))
-              } catch (e) {
-                // Ignore parsing errors
+          if (descriptor.scriptSetup) {
+            let scriptSetupContent = descriptor.scriptSetup.content
+            if (descriptor.scriptSetup.lang === 'ts') {
+              const transpiled = ts.transpileModule(scriptSetupContent, { compilerOptions: { module: ts.ModuleKind.ESNext } })
+              scriptSetupContent = transpiled.outputText
+            }
+            const scriptSetupAst = acorn.parse(scriptSetupContent, {
+              ecmaVersion: 'latest',
+              sourceType: 'module'
+            })
+            const scriptSetupKeys = extractKeys(scriptSetupAst, ['trans', 'wTrans', 'transChoice', 'wTransChoice'])
+            scriptSetupKeys.forEach(key => usedKeys!.add(key))
+          }
+
+          if (descriptor.template) {
+            const templateAst = descriptor.template.ast
+            if (templateAst) {
+              const expressions = collectTemplateExpressions(templateAst)
+              for (const expr of expressions) {
+                try {
+                  const exprAst = acorn.parseExpressionAt(expr, 0, { ecmaVersion: 'latest' })
+                  const exprKeys = extractKeys(exprAst, ['$t', '$tChoice'])
+                  exprKeys.forEach(key => usedKeys!.add(key))
+                } catch (e) {
+                  // Ignore parsing errors
+                }
               }
             }
           }
         }
+      } else {
+        usedKeys = null
       }
 
       if (!hasPhpTranslations(frameworkLangPath) && !hasPhpTranslations(langPath)) return

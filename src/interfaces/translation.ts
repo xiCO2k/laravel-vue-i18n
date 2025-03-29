@@ -1,0 +1,1 @@
+export type TranslationValue = string | null | { [key: string]: TranslationValue };

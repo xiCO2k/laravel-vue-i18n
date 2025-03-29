@@ -1,4 +1,4 @@
-import { reactive, Plugin, computed, ComputedRef, watchEffect, ref, ComputedRef } from 'vue'
+import { reactive, Plugin, computed, ComputedRef, watchEffect, ref } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { PluginOptionsInterface } from './interfaces/plugin-options'
 import { LanguageInterface } from './interfaces/language'

@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Cache npm dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: npm-${{ hashFiles('package-lock.json') }}

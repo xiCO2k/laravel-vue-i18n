@@ -110,6 +110,8 @@ export const parse = (content: string) => {
 }
 
 const parseItem = (expr) => {
+  if(!expr) return;
+
   if (expr.kind === 'string') {
     return expr.value
   }
@@ -155,7 +157,7 @@ const convertToDotsSyntax = (list) => {
   const flatten = (items, context = '') => {
     const data = {}
 
-    if (items === null) {
+    if (items === null || items === undefined) {
       return data
     }
 

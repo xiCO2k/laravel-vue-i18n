@@ -141,11 +141,12 @@ it('transforms class names and consts to .json', () => {
     expect(lang['name']).toBe('Name');
 });
 
-it('ignores empty `array` or `null` translations', () => {
+it('ignores empty `array`, `null`, or `undefined` translations', () => {
     const lang = parse(fs.readFileSync(isolatedFixtures + '/lang/en/ignore.php').toString());
 
     expect(lang['empty_array']).toBe(undefined);
     expect(lang['null']).toBe(undefined);
+    expect(lang['undefined']).toBe(undefined);
 });
 
 it('checks if there is .php translations', () => {

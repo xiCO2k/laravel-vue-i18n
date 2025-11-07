@@ -122,7 +122,7 @@ declare module 'vue' {
 /**
  * The Vue Plugin. to be used on your Vue app like this: `app.use(i18nVue)`
  */
-export const i18nVue: Plugin = {
+export const i18nVue = {
   install(app, options: PluginOptionsInterface = {}) {
     options = { ...DEFAULT_PLUGIN_OPTIONS, ...options }
 
@@ -134,7 +134,7 @@ export const i18nVue: Plugin = {
 
     app.provide('i18n', i18n)
   }
-}
+} satisfies Plugin;
 
 /**
  * The I18n class. Encapsulates all language loading and translation logic.

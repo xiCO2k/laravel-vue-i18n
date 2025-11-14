@@ -54,7 +54,7 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
       files = generateFiles(langPath, langPaths)
     },
     handleHotUpdate(ctx) {
-      if (/lang\/.*\.php$/.test(ctx.file)) {
+      if ([langPath, ...additionalLangPaths].some(path => new RegExp(`${path}.*\\.php$`).test(ctx.file))) {
         const langPaths = prepareExtendedParsedLangFiles([frameworkLangPath, langPath, ...additionalLangPaths])
 
         files = generateFiles(langPath, langPaths)

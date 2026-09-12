@@ -1,104 +1,121 @@
 import { I18n } from '../src'
 
 it('can update options and get the active language', async () => {
-    const i18n = new I18n({ lang: 'en '})
+  const i18n = new I18n({ lang: 'en ' })
 
-    i18n.setOptions({ lang: 'et' })
+  i18n.setOptions({ lang: 'et' })
 
-    expect(i18n.getActiveLanguage()).toBe('et')
+  expect(i18n.getActiveLanguage()).toBe('et')
 })
 
 it('can set the active language and its messages', async () => {
-    const i18n = new I18n()
+  const i18n = new I18n()
 
-    i18n.setLanguage({ lang: 'pt', messages: { 'Welcome!': 'Bem-vindo!' }})
+  i18n.setLanguage({ lang: 'pt', messages: { 'Welcome!': 'Bem-vindo!' } })
 
-    expect(i18n.getActiveLanguage()).toBe('pt')
-    expect(i18n.trans('Welcome!')).toBe('Bem-vindo!')
+  expect(i18n.getActiveLanguage()).toBe('pt')
+  expect(i18n.trans('Welcome!')).toBe('Bem-vindo!')
 })
 
 it('does not share state between different instances', async () => {
-    const enI18n = new I18n()
-    const ptI18n = new I18n()
+  const enI18n = new I18n()
+  const ptI18n = new I18n()
 
-    enI18n.setLanguage({ lang: 'en', messages: { 'Welcome!': 'Welcome!' }})
-    ptI18n.setLanguage({ lang: 'pt', messages: { 'Welcome!': 'Bem-vindo!' }})
+  enI18n.setLanguage({ lang: 'en', messages: { 'Welcome!': 'Welcome!' } })
+  ptI18n.setLanguage({ lang: 'pt', messages: { 'Welcome!': 'Bem-vindo!' } })
 
-    expect(enI18n.getActiveLanguage()).toBe('en')
-    expect(enI18n.trans('Welcome!')).toBe('Welcome!')
+  expect(enI18n.getActiveLanguage()).toBe('en')
+  expect(enI18n.trans('Welcome!')).toBe('Welcome!')
 
-    expect(ptI18n.getActiveLanguage()).toBe('pt')
-    expect(ptI18n.trans('Welcome!')).toBe('Bem-vindo!')
+  expect(ptI18n.getActiveLanguage()).toBe('pt')
+  expect(ptI18n.trans('Welcome!')).toBe('Bem-vindo!')
 })
 
 it('allows creating a shared instance', async () => {
-    const shared1 = I18n.getSharedInstance()
-    const shared2 = I18n.getSharedInstance()
+  const shared1 = I18n.getSharedInstance()
+  const shared2 = I18n.getSharedInstance()
 
-    expect(shared1).toBeInstanceOf(I18n)
-    expect(shared2).toBe(shared1)
+  expect(shared1).toBeInstanceOf(I18n)
+  expect(shared2).toBe(shared1)
 })
 
 it('allows creating a shared instance with options', async () => {
-    const shared = I18n.getSharedInstance({ lang: 'pt' })
+  const shared = I18n.getSharedInstance({ lang: 'pt' })
 
-    expect(shared.getActiveLanguage()).toBe('pt')
+  expect(shared.getActiveLanguage()).toBe('pt')
 })
 
 it('allows updating options when getting a shared instance', async () => {
-    const shared = I18n.getSharedInstance({ lang: 'en' })
+  const shared = I18n.getSharedInstance({ lang: 'en' })
 
-    I18n.getSharedInstance({ lang: 'pt' })
+  I18n.getSharedInstance({ lang: 'pt' })
 
-    expect(shared.getActiveLanguage()).toBe('pt')
+  expect(shared.getActiveLanguage()).toBe('pt')
 })
 
 it('allows resetting all data', async () => {
-    const i18n = new I18n({
-        resolve: lang => import(`./fixtures/lang/${lang}.json`)
-    })
+  const i18n = new I18n({
+    resolve: (lang) => import(`./fixtures/lang/${lang}.json`)
+  })
 
-    await i18n.loadLanguageAsync('pt')
+  await i18n.loadLanguageAsync('pt')
 
-    expect(i18n.getActiveLanguage()).toBe('pt')
-    expect(i18n.trans('Welcome!')).toBe('Bem-vindo!')
+  expect(i18n.getActiveLanguage()).toBe('pt')
+  expect(i18n.trans('Welcome!')).toBe('Bem-vindo!')
 
-    i18n.reset()
+  i18n.reset()
 
-    expect(i18n.getActiveLanguage()).toBe('en')
-    expect(i18n.trans('Welcome!')).toBe('Welcome!')
+  expect(i18n.getActiveLanguage()).toBe('en')
+  expect(i18n.trans('Welcome!')).toBe('Welcome!')
 })
 
 it('calls onLoad when loaded', async () => {
-    const onLoadFunction = jest.fn()
+  const onLoadFunction = vi.fn()
 
-    const i18n = new I18n({
-        lang: 'pt',
-        resolve: lang => import(`./fixtures/lang/${lang}.json`),
-        onLoad: onLoadFunction
-    })
+  const i18n = new I18n({
+    lang: 'pt',
+    resolve: (lang) => import(`./fixtures/lang/${lang}.json`),
+    onLoad: onLoadFunction
+  })
 
-    await i18n.loadLanguageAsync('en')
+  await i18n.loadLanguageAsync('en')
 
-    expect(onLoadFunction).toHaveBeenCalledTimes(2)
-    expect(onLoadFunction).toHaveBeenCalledWith('en')
-    expect(onLoadFunction).toHaveBeenCalledWith('pt')
+  expect(onLoadFunction).toHaveBeenCalledTimes(2)
+  expect(onLoadFunction).toHaveBeenCalledWith('en')
+  expect(onLoadFunction).toHaveBeenCalledWith('pt')
 })
 
 it('can override missing translations with fallback language translations', async () => {
-    const onLoadFunction = jest.fn()
-    const i18n = new I18n({
-        fallbackLang: 'en',
-        fallbackMissingTranslations: true,
-        resolve: lang => import(`./fixtures/lang/${lang}.json`),
-        onLoad: onLoadFunction
-    })
-    await i18n.loadLanguageAsync('pt')
+  const onLoadFunction = vi.fn()
+  const i18n = new I18n({
+    fallbackLang: 'en',
+    fallbackMissingTranslations: true,
+    resolve: (lang) => import(`./fixtures/lang/${lang}.json`),
+    onLoad: onLoadFunction
+  })
+  await i18n.loadLanguageAsync('pt')
 
-    expect(onLoadFunction).toHaveBeenCalledTimes(1)
+  expect(onLoadFunction).toHaveBeenCalledTimes(1)
 
-    expect(i18n.getActiveLanguage()).toBe('pt')
-    expect(i18n.trans('Welcome!')).toBe('Bem-vindo!')
+  expect(i18n.getActiveLanguage()).toBe('pt')
+  expect(i18n.trans('Welcome!')).toBe('Bem-vindo!')
 
-    expect(i18n.trans('English only.')).toBe('English only.')
+  expect(i18n.trans('English only.')).toBe('English only.')
+})
+
+it('handles a missing JSON language while PHP translations load asynchronously', async () => {
+  const i18n = new I18n({
+    lang: 'fr',
+    resolve: (lang) =>
+      lang === 'php_fr'
+        ? new Promise((resolve) => setTimeout(() => resolve({ default: { hello: 'Bonjour' } }), 10))
+        : Promise.reject(new Error('No JSON file'))
+  })
+  process.env.LARAVEL_VUE_I18N_HAS_PHP = 'true'
+  try {
+    await i18n.loadLanguageAsync('fr')
+    expect(i18n.trans('hello')).toBe('Bonjour')
+  } finally {
+    delete process.env.LARAVEL_VUE_I18N_HAS_PHP
+  }
 })

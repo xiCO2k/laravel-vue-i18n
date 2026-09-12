@@ -3,21 +3,47 @@ name: Tests
 on: ['push', 'pull_request']
 
 jobs:
-  ci:
-    name: 'Run Tests'
-    runs-on: ubuntu-latest
+  tests:
+    name: Tests (Node ${{ matrix.node }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { node: '22', os: ubuntu-latest }
+          - { node: '24', os: ubuntu-latest }
+          - { node: '22', os: windows-latest }
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          path: node_modules
-          key: npm-${{ hashFiles('package-lock.json') }}
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:types
+      - run: npm run lint
+      - run: npm test
+      - run: npm exec -- publint --pack false --strict
 
-      - name: Install Modules
-        run: npm install
-
-      - name: Run Tests
-        run: npm test
+  consumers:
+    name: Consumer ${{ matrix.tooling }} (Node ${{ matrix.node }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        tooling: ['4', '5', '6', '7', '8', 'plus', 'mix']
+        node: ['22']
+        os: [ubuntu-latest]
+        include:
+          - { tooling: '8', node: '24', os: ubuntu-latest }
+          - { tooling: 'plus', node: '24', os: ubuntu-latest }
+          - { tooling: '8', node: '22', os: windows-latest }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run test:integration -- ${{ matrix.tooling }}

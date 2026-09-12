@@ -20,15 +20,14 @@ export const hasPhpTranslations = (folderPath: string): boolean => {
       .filter((file) => fs.statSync(folderPath + path.sep + file).isDirectory())
       .sort()
 
-    for (const folder of folders) {
-      const lang = {}
+    const containsPhp = (directory: string): boolean =>
+      fs
+        .readdirSync(directory, { withFileTypes: true })
+        .some((entry) =>
+          entry.isDirectory() ? containsPhp(path.join(directory, entry.name)) : entry.name.endsWith('.php')
+        )
 
-      const files = fs.readdirSync(folderPath + path.sep + folder).filter((file) => /\.php$/.test(file))
-
-      if (files.length > 0) {
-        return true
-      }
-    }
+    return folders.some((folder) => containsPhp(path.join(folderPath, folder)))
   } catch (e) {}
 
   return false
@@ -110,6 +109,10 @@ export const parse = (content: string) => {
 }
 
 const parseItem = (expr) => {
+  if (!expr) {
+    return null
+  }
+
   if (expr.kind === 'string') {
     return expr.value
   }
@@ -129,7 +132,9 @@ const parseItem = (expr) => {
   }
 
   if (expr.kind === 'bin') {
-    return parseItem(expr.left) + parseItem(expr.right)
+    const left = parseItem(expr.left)
+    const right = parseItem(expr.right)
+    return typeof left === 'string' && typeof right === 'string' ? left + right : null
   }
 
   if (expr.key) {
@@ -155,7 +160,7 @@ const convertToDotsSyntax = (list) => {
   const flatten = (items, context = '') => {
     const data = {}
 
-    if (items === null) {
+    if (items === null || typeof items !== 'object') {
       return data
     }
 
@@ -196,7 +201,7 @@ export const readThroughDir = (dir) => {
       const subFolderFileKey = file.replace(/\.\w+$/, '')
 
       data[subFolderFileKey] = readThroughDir(absoluteFile)
-    } else {
+    } else if (file.endsWith('.php')) {
       data[file.replace(/\.\w+$/, '')] = parse(fs.readFileSync(absoluteFile).toString())
     }
   })
@@ -211,11 +216,15 @@ export const generateFiles = (langPath: string, data: ParsedLangFileInterface[])
   data = mergeData(data)
 
   if (!fs.existsSync(langPath)) {
-    fs.mkdirSync(langPath)
+    fs.mkdirSync(langPath, { recursive: true })
   }
 
   data.forEach(({ name, translations }) => {
-    fs.writeFileSync(langPath + name, JSON.stringify(translations))
+    const filePath = path.join(langPath, name)
+    const content = JSON.stringify(translations)
+    if (!fs.existsSync(filePath) || fs.readFileSync(filePath, 'utf8') !== content) {
+      fs.writeFileSync(filePath, content)
+    }
   })
 
   return data

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ES2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "dist",
     "resolveJsonModule": true,
     "declaration": true,
@@ -13,8 +13,5 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
-  "rules": {
-    "no-console": false
-  }
+  ]
 }

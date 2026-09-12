@@ -66,12 +66,15 @@ In order to load `php` translations, you can use this `Vite` plugin.
 
 ```js
 // vite.config.js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
 import i18n from 'laravel-vue-i18n/vite';
 
 export default defineConfig({
     plugins: [
         laravel([
-            'resources/css/app.css'
+            'resources/css/app.css',
             'resources/js/app.js',
         ]),
         vue(),
@@ -88,6 +91,12 @@ export default defineConfig({
 
 #### Vite plugin options
 
+Relative translation paths are resolved from Vite's `root` (the project directory by default). Absolute paths are also supported. Nested PHP translations and configurations containing only additional translation paths are supported.
+
+During development, editing, adding, or deleting a PHP translation in any configured directory regenerates the JSON files and reloads the page. Generated files are cleaned up when the server or build closes; files that existed before generation are restored. Parallel builds sharing an output directory should use the same translation configuration. Separate processes should run client and SSR builds sequentially.
+
+The PHP loader extracts static strings and arrays. It skips unsupported values such as closures, function calls, and variable expressions; it does not execute PHP. Other files inside locale directories are ignored.
+
 In addition to that, you can use this `Vite` plugin with additional paths to load from, this is usefull when you are using a package that let's you override your translations, or in case you are getting your application's lang files from different paths. 
 
 Note that if one key found in two paths, priority will be given to the last given path between these two (In this example translation key will be loaded from `public/locales`)
@@ -99,7 +108,7 @@ import i18n from 'laravel-vue-i18n/vite';
 export default defineConfig({
     plugins: [
         laravel([
-            'resources/css/app.css'
+            'resources/css/app.css',
             'resources/js/app.js',
         ]),
         vue(),
@@ -121,6 +130,27 @@ export default defineConfig({
 ```bash
 lang/php_*.json
 ```
+
+#### With Vite+
+
+Follow the [Vite+ migration guide](https://viteplus.dev/guide/migrate) to install Vite+ and configure its Vite dependency alias. Then use the existing plugin in your config:
+
+```js
+import { defineConfig } from 'vite-plus';
+import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
+import i18n from 'laravel-vue-i18n/vite';
+
+export default defineConfig({
+    plugins: [
+        laravel({ input: ['resources/js/app.js'] }),
+        vue(),
+        i18n(),
+    ],
+});
+```
+
+Run `vp dev` or `vp build`. The Vue setup and translation resolver shown above stay the same. Vite+ is optional; this package does not install it.
 
 ### With Webpack / Laravel Mix
 
@@ -394,3 +424,22 @@ I18n.getSharedInstance()
 ### Caveats
 
 It is possible to import a translation function before installing the `i18nVue` plugin. When calling the translation function, ie `trans()`, and the plugin has not been installed, a shared `I18n` instance will be created with default options. This ensures that it's possible to import and call these functions without any fatal errors. However, this may yield undesired results. Therefore, it is advisable to never call any translation methods before the plugin is installed.
+
+## Development
+
+Use Node.js 22.22.2+ or 24.15+ for the repository's development tools. This requirement applies to contributors; consuming applications follow their own Vite or Mix requirements.
+
+```sh
+npm ci
+npm test
+npm run typecheck
+npm run test:types
+npm run lint
+npm run test:integration
+```
+
+`npm run build` uses tsdown to produce the existing ESM and CommonJS entry points, with declarations for NodeNext, bundler, and legacy TypeScript resolution. `npm run watch` rebuilds those outputs during development. Vitest runs the unit and Vite lifecycle tests.
+
+The integration command packs the library and installs it into temporary consumer projects for Vite 4–8, Vite+, and Mix. It checks translation rendering in jsdom, SSR, package imports, types, file watching, and cleanup. To select a consumer, use `npm run test:integration -- 8`, `-- plus`, or `-- mix`. These checks install dependencies and require network access.
+
+Webpack is deliberately kept at `~5.99.9` in the development dependencies to retain the Mix 6 compatibility check. TypeScript uses the latest 5.9 patch line; consumer declarations also retain the legacy paths supported by 2.x.

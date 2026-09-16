@@ -15,7 +15,8 @@ const put = (root: string, file: string, value: string) => {
   fs.writeFileSync(target, value)
 }
 const fixture = () => {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'laravel-vue-i18n-')))
+  // Match Vite's canonical paths when Windows expands short temporary-directory aliases.
+  const root = fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(), 'laravel-vue-i18n-')))
   roots.push(root)
   put(root, 'main.js', "export const translations = import.meta.glob('./lang/*.json', { eager: true });")
   return root

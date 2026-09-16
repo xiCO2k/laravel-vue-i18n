@@ -171,14 +171,18 @@ it('cleans generated files after a failed build', async () => {
   expect(fs.existsSync(path.join(root, 'lang/php_en.json'))).toBe(false)
 })
 
-it('recovers after invalid PHP is fixed without restarting the server', async () => {
+it('recovers when invalid PHP is fixed immediately after an error', async () => {
   const root = fixture()
   put(root, 'lang/en/messages.php', php('INITIAL'))
   const server = await start(root)
-  const send = vi.spyOn(server.ws, 'send')
+  const send = vi.spyOn(server.ws, 'send').mockImplementation((payload: unknown) => {
+    if (typeof payload === 'object' && payload !== null && 'type' in payload && payload.type === 'error') {
+      // Save the correction as soon as the error is reported.
+      put(root, 'lang/en/messages.php', php('RECOVERED'))
+    }
+  })
   put(root, 'lang/en/messages.php', '<?php return [')
   await vi.waitFor(() => expect(send).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' })))
-  put(root, 'lang/en/messages.php', php('RECOVERED'))
   await vi.waitFor(() => expect(messages(root)['messages.hello']).toBe('RECOVERED'))
 })
 

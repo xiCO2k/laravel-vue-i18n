@@ -121,6 +121,7 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
     if (!isTranslation(file)) return
 
     clearTimeout(timer)
+    // Read after Chokidar's 50 ms change-event throttle so fast saves aren't missed.
     timer = setTimeout(() => {
       try {
         generate()
@@ -132,7 +133,7 @@ export default function i18n(options: string | VitePluginOptionsInterface = 'lan
         server.config.logger.error('[laravel-vue-i18n] ' + message)
         server.ws.send({ type: 'error', err: { message, stack: error instanceof Error ? error.stack : '' } })
       }
-    }, 30)
+    }, 60)
   }
 
   const dispose = () => {

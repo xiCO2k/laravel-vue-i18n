@@ -216,8 +216,8 @@ export function getPluralIndex(lang: string, number: number): number {
       return number % 10 == 1 && number % 100 != 11
         ? 0
         : number % 10 >= 2 && number % 10 <= 4 && (number % 100 < 10 || number % 100 >= 20)
-        ? 1
-        : 2
+          ? 1
+          : 2
     case 'cs':
     case 'cs-CZ':
     case 'sk':
@@ -231,8 +231,8 @@ export function getPluralIndex(lang: string, number: number): number {
       return number % 10 == 1 && number % 100 != 11
         ? 0
         : number % 10 >= 2 && (number % 100 < 10 || number % 100 >= 20)
-        ? 1
-        : 2
+          ? 1
+          : 2
     case 'sl':
     case 'sl-SI':
       return number % 100 == 1 ? 0 : number % 100 == 2 ? 1 : number % 100 == 3 || number % 100 == 4 ? 2 : 3
@@ -244,10 +244,10 @@ export function getPluralIndex(lang: string, number: number): number {
       return number == 1
         ? 0
         : number == 0 || (number % 100 > 1 && number % 100 < 11)
-        ? 1
-        : number % 100 > 10 && number % 100 < 20
-        ? 2
-        : 3
+          ? 1
+          : number % 100 > 10 && number % 100 < 20
+            ? 2
+            : 3
     case 'lv':
     case 'lv-LV':
       return number == 0 ? 0 : number % 10 == 1 && number % 100 != 11 ? 1 : 2
@@ -283,14 +283,14 @@ export function getPluralIndex(lang: string, number: number): number {
       return number == 0
         ? 0
         : number == 1
-        ? 1
-        : number == 2
-        ? 2
-        : number % 100 >= 3 && number % 100 <= 10
-        ? 3
-        : number % 100 >= 11 && number % 100 <= 99
-        ? 4
-        : 5
+          ? 1
+          : number == 2
+            ? 2
+            : number % 100 >= 3 && number % 100 <= 10
+              ? 3
+              : number % 100 >= 11 && number % 100 <= 99
+                ? 4
+                : 5
     default:
       return 0
   }

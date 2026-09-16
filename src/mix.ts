@@ -2,10 +2,13 @@ import path from 'path'
 import fs from 'fs'
 
 import mix from 'laravel-mix'
-import { Component } from 'laravel-mix/src/components/Component'
-import { EnvironmentPlugin, Configuration } from 'webpack'
+import { Component } from 'laravel-mix/src/components/Component.js'
+import webpack from 'webpack'
+import type { Configuration } from 'webpack'
 
 import { generateFiles, parseAll, hasPhpTranslations } from './loader'
+
+const { EnvironmentPlugin } = webpack
 
 class BeforeBuildPlugin {
   callback: Function

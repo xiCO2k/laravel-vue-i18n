@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": [],
+    "skipLibCheck": false
+  },
+  "include": [
+    "*.mts",
+    "*.cts"
+  ]
+}

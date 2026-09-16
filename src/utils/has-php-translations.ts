@@ -3,7 +3,11 @@ export function hasPhpTranslations(isServer: boolean): boolean {
 }
 
 function checkProcessEnv(): boolean {
-  return typeof process !== 'undefined' && process.env?.LARAVEL_VUE_I18N_HAS_PHP ? true : false
+  try {
+    return !!process.env.LARAVEL_VUE_I18N_HAS_PHP
+  } catch {
+    return false
+  }
 }
 
 function checkImportMeta(): boolean {

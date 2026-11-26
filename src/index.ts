@@ -1,4 +1,4 @@
-import { reactive, Plugin, computed, ComputedRef, watchEffect, ref } from 'vue'
+import { reactive, Plugin, computed, ComputedRef, ref } from 'vue'
 import { OptionsInterface } from './interfaces/options'
 import { PluginOptionsInterface } from './interfaces/plugin-options'
 import { LanguageInterface } from './interfaces/language'
@@ -430,17 +430,15 @@ export class I18n {
    * Get the translation for the given key and watch for any changes.
    */
   wTrans(key: string, replacements: ReplacementsInterface = {}): ComputedRef<string> {
-    watchEffect(() => {
+    return computed(() => {
       let value = this.findTranslation(key)
 
       if (!this.isValid(value)) {
         value = this.findTranslation(key.replace(/\//g, '.'))
       }
 
-      this.activeMessages[key] = this.isValid(value) ? value : key
+      return this.makeReplacements(this.isValid(value) ? value : key, replacements)
     })
-
-    return computed(() => this.makeReplacements(this.activeMessages[key], replacements))
   }
 
   /**
